@@ -303,3 +303,4 @@ Para soporte técnico o preguntas sobre el algoritmo:
 Cada día verás 4 productos únicos seleccionados inteligentemente de tu base de datos, con rotación automática y sistema de fallback robusto.
 
 
+
