@@ -40,7 +40,7 @@ export function useDailyRecommendations(): UseDailyRecommendationsReturn {
       setError(null);
 
       // Obtener categorías disponibles
-      let categorias = await getCategoriasByDominio("tiendanavidena");
+      let categorias = await getCategoriasByDominio("tienda-navidena-jos-projects-38eabb66.vercel.app");
       
       // Si no hay categorías en la API, usar categorías por defecto
       if (!categorias || categorias.length === 0) {
