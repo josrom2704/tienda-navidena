@@ -2,7 +2,7 @@
 import { useCallback } from 'react';
 
 export const useApi = () => {
-  const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
+  const API = process.env.NEXT_PUBLIC_API_URL || "https://flores-backend-px2c.onrender.com/api";
 
   const DEV_TOKEN =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzU0NjEyNjUyLCJleHAiOjE3NTQ2MjcwNTJ9.WzTpRBuo1iGFop5KnvH-VJerVVT5wI_WlWuWGmQ1HrM";

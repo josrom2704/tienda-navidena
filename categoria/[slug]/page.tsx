@@ -7,7 +7,7 @@ export default function CategoriaPage({ params }: { params: { slug: string } }) 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
+    const API = process.env.NEXT_PUBLIC_API_URL || "https://flores-backend-px2c.onrender.com/api";
     const dominio = window.location.hostname; // multi-tenant por dominio
 
     (async () => {

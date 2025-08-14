@@ -9,7 +9,7 @@ export function buildImageUrl(imagePath: string | undefined): string {
   const cleanPath = imagePath.replace(/^public[\\/]/, '').replace(/^\/+/, '');
 
   // Usa la URL base de tu API (sin /api para que apunte a estáticos)
-  const base = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000').replace(/\/api$/, '');
+  const base = (process.env.NEXT_PUBLIC_API_URL || 'https://flores-backend-px2c.onrender.com').replace(/\/api$/, '');
 
   return `${base}/${cleanPath}`;
 }
