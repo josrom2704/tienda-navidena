@@ -27,7 +27,7 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
     address: "",
     city: "",
     postalCode: "",
-    country: "México",
+            country: "El Salvador",
     notes: ""
   });
 
