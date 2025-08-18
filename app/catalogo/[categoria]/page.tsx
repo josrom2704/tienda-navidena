@@ -32,12 +32,15 @@ function prettifyLabel(slug: string) {
   
   // ✅ Buscar en el mapeo primero
   if (slugToCategoria[slug]) {
+    console.log("🔍 [prettifyLabel] Slug mapeado:", slug, "→ Categoría:", slugToCategoria[slug]);
     return slugToCategoria[slug];
   }
   
   // ✅ Fallback: normalizar como antes
   const cleaned = slug.replace(/%20/g, " ").replace(/-/g, " ");
-  return cleaned.replace(/\b\w/g, (c) => c.toUpperCase());
+  const result = cleaned.replace(/\b\w/g, (c) => c.toUpperCase());
+  console.log("🔍 [prettifyLabel] Slug no mapeado, usando fallback:", slug, "→ Resultado:", result);
+  return result;
 }
 
 export default function CategoriaPage() {
