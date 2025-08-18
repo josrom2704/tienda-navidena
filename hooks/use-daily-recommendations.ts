@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useApi } from './useApi';
+import { useDominio } from './useDominio';
 import { 
   RECOMMENDATION_CONFIG, 
-  mapDatabaseProduct, 
-  getRandomNumber 
+  mapDatabaseProduct
 } from '@/lib/recommendation-config';
 
 interface Product {
@@ -32,21 +32,31 @@ export function useDailyRecommendations(): UseDailyRecommendationsReturn {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   
   const { getCategoriasByDominio, getProductosByCategoria, getProductosAll } = useApi();
+  const dominio = useDominio();
 
   // Función para seleccionar productos aleatorios pero consistentes por día
   const selectDailyProducts = useCallback(async (): Promise<void> => {
+    if (!dominio) {
+      console.log("⏳ Esperando dominio...");
+      return;
+    }
+
     try {
       setIsLoading(true);
       setError(null);
 
+      console.log("🔍 Obteniendo productos recomendados para dominio:", dominio);
+
       // Obtener categorías disponibles
-      let categorias = await getCategoriasByDominio("tienda-navidena-jos-projects-38eabb66.vercel.app");
+      let categorias = await getCategoriasByDominio(dominio);
+      console.log("✅ Categorías obtenidas:", categorias);
       
-      // Si no hay categorías en la API, usar categorías por defecto
+      // Si no hay categorías, no mostrar productos
       if (!categorias || categorias.length === 0) {
-        console.log("No hay categorías en la API, usando categorías por defecto");
-        const defaultCategories = ["canastas-vino", "canastas-whisky", "canastas-sin-licor", "flores"];
-        categorias = defaultCategories;
+        console.log("⚠️ No hay categorías disponibles");
+        setDailyProducts([]);
+        setLastUpdated(new Date());
+        return;
       }
 
       // Seleccionar 4 categorías aleatorias diferentes
@@ -57,95 +67,79 @@ export function useDailyRecommendations(): UseDailyRecommendationsReturn {
         selectedCategories.push(shuffledCategories[i]);
       }
 
-      // Obtener todos los productos disponibles
+      // Obtener productos de las categorías seleccionadas
       let allProducts: Product[] = [];
       
-      try {
-        // Intentar obtener productos por categoría primero
-        for (const categoria of selectedCategories) {
-          try {
-            const productos = await getProductosByCategoria("tiendanavidena", categoria);
-            
-            if (productos && productos.length > 0) {
-              // Seleccionar 1 producto aleatorio de cada categoría
-              const randomIndex = Math.floor(Math.random() * productos.length);
-              const selectedProduct = productos[randomIndex];
-              
-              // Convertir el formato de la base de datos al formato del componente
-              const formattedProduct: Product = mapDatabaseProduct(selectedProduct, categoria);
-              
-              allProducts.push(formattedProduct);
-            }
-          } catch (error) {
-            console.warn(`Error obteniendo productos de categoría ${categoria}:`, error);
-            // Continuar con la siguiente categoría
-          }
-        }
-        
-        // Si no obtuvimos productos por categoría, intentar obtener todos los productos
-        if (allProducts.length === 0) {
-          console.log("Intentando obtener todos los productos disponibles...");
+      for (const categoria of selectedCategories) {
+        try {
+          console.log(`🔍 Obteniendo productos de categoría: ${categoria}`);
+          const productos = await getProductosByCategoria(dominio, categoria);
           
-          try {
-            // Intentar obtener productos sin filtrar por dominio
-            const todosLosProductos = await getProductosAll("");
+          if (productos && productos.length > 0) {
+            // Seleccionar 1 producto aleatorio de cada categoría
+            const randomIndex = Math.floor(Math.random() * productos.length);
+            const selectedProduct = productos[randomIndex];
             
-            if (todosLosProductos && todosLosProductos.length > 0) {
-              console.log(`Encontrados ${todosLosProductos.length} productos en total`);
-              // Seleccionar 4 productos aleatorios
-              const shuffledProducts = [...todosLosProductos].sort(() => Math.random() - 0.5);
-              const selectedProducts = shuffledProducts.slice(0, RECOMMENDATION_CONFIG.maxProductsPerDay);
-              
-              // Convertir cada producto al formato del componente
-              allProducts = selectedProducts.map(producto => mapDatabaseProduct(producto, producto.categoria || "General"));
-            }
-          } catch (error) {
-            console.warn("Error obteniendo todos los productos:", error);
+            console.log(`✅ Producto seleccionado de ${categoria}:`, selectedProduct);
+            
+            // Convertir el formato de la base de datos al formato del componente
+            const formattedProduct: Product = mapDatabaseProduct(selectedProduct, categoria);
+            
+            allProducts.push(formattedProduct);
           }
+        } catch (error) {
+          console.warn(`❌ Error obteniendo productos de categoría ${categoria}:`, error);
+          // Continuar con la siguiente categoría
         }
-      } catch (error) {
-        console.error("Error obteniendo productos:", error);
       }
-
-      // Si no hay productos en la API, usar productos de respaldo directamente
+      
+      // Si no obtuvimos productos por categoría, intentar obtener todos los productos
       if (allProducts.length === 0) {
-        console.log("No hay productos en la API, usando productos de respaldo");
-        const backupProducts = getBackupProducts();
-        // Seleccionar 4 productos aleatorios de respaldo
-        const shuffledBackup = [...backupProducts].sort(() => Math.random() - 0.5);
-        allProducts.push(...shuffledBackup.slice(0, RECOMMENDATION_CONFIG.maxProductsPerDay));
-      }
-      // Si tenemos algunos productos pero no suficientes, completar con productos de respaldo
-      else if (allProducts.length < RECOMMENDATION_CONFIG.maxProductsPerDay) {
-        const backupProducts = getBackupProducts();
-        const needed = RECOMMENDATION_CONFIG.maxProductsPerDay - allProducts.length;
+        console.log("🔍 Intentando obtener todos los productos disponibles...");
         
-        for (let i = 0; i < needed; i++) {
-          const randomIndex = Math.floor(Math.random() * backupProducts.length);
-          allProducts.push(backupProducts[randomIndex]);
+        try {
+          const todosLosProductos = await getProductosAll(dominio);
+          
+          if (todosLosProductos && todosLosProductos.length > 0) {
+            console.log(`✅ Encontrados ${todosLosProductos.length} productos en total`);
+            // Seleccionar 4 productos aleatorios
+            const shuffledProducts = [...todosLosProductos].sort(() => Math.random() - 0.5);
+            const selectedProducts = shuffledProducts.slice(0, RECOMMENDATION_CONFIG.maxProductsPerDay);
+            
+            // Convertir cada producto al formato del componente
+            allProducts = selectedProducts.map(producto => mapDatabaseProduct(producto, producto.categoria || "General"));
+          }
+        } catch (error) {
+          console.warn("❌ Error obteniendo todos los productos:", error);
         }
       }
 
-      // Limitar a exactamente 4 productos
-      setDailyProducts(allProducts.slice(0, RECOMMENDATION_CONFIG.maxProductsPerDay));
+      // ✅ NO usar productos hardcodeados - solo productos del backend
+      if (allProducts.length === 0) {
+        console.log("⚠️ No hay productos disponibles en el backend");
+        setDailyProducts([]);
+        setError("No hay productos disponibles en este momento");
+      } else {
+        // Limitar a exactamente 4 productos
+        const finalProducts = allProducts.slice(0, RECOMMENDATION_CONFIG.maxProductsPerDay);
+        console.log("✅ Productos recomendados finales:", finalProducts);
+        setDailyProducts(finalProducts);
+        setError(null);
+      }
+      
       setLastUpdated(new Date());
 
     } catch (error) {
-      console.error("Error en selección diaria:", error);
+      console.error("❌ Error en selección diaria:", error);
       setError("No se pudieron cargar los productos recomendados");
       
-      // Usar productos de respaldo en caso de error
-      setDailyProducts(getBackupProducts());
+      // ✅ NO usar productos hardcodeados - array vacío en caso de error
+      setDailyProducts([]);
       setLastUpdated(new Date());
     } finally {
       setIsLoading(false);
     }
-  }, [getCategoriasByDominio, getProductosByCategoria]);
-
-  // Productos de respaldo en caso de error
-  const getBackupProducts = useCallback((): Product[] => {
-    return RECOMMENDATION_CONFIG.fallbackProducts;
-  }, []);
+  }, [getCategoriasByDominio, getProductosByCategoria, getProductosAll, dominio]);
 
   // Función para refrescar recomendaciones
   const refreshRecommendations = useCallback(async (): Promise<void> => {

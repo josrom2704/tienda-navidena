@@ -22,30 +22,36 @@ export function CategoriesGrid() {
 
     (async () => {
       try {
-        console.log("🔍 Cargando categorías para dominio:", dominio);
+        console.log("🔍 [CATEGORÍAS] Iniciando carga para dominio:", dominio);
+        console.log("🔍 [CATEGORÍAS] URL del backend:", `https://flores-backend-px2c.onrender.com/api/categorias?dominio=${dominio}`);
+        
         const data = await getCategoriasByDominio(dominio);
-        console.log("✅ Categorías cargadas del backend:", data);
-        console.log("📊 Tipo de datos:", typeof data);
-        console.log("📊 Longitud:", Array.isArray(data) ? data.length : 'No es array');
-        console.log("📊 Contenido completo:", JSON.stringify(data, null, 2));
+        console.log("✅ [CATEGORÍAS] Respuesta del backend:", data);
+        console.log("📊 [CATEGORÍAS] Tipo de datos:", typeof data);
+        console.log("📊 [CATEGORÍAS] Longitud:", Array.isArray(data) ? data.length : 'No es array');
+        console.log("📊 [CATEGORÍAS] Contenido completo:", JSON.stringify(data, null, 2));
         
         setDebugInfo({
           dominio,
           categorias: data,
           tipo: typeof data,
           esArray: Array.isArray(data),
-          longitud: Array.isArray(data) ? data.length : 'N/A'
+          longitud: Array.isArray(data) ? data.length : 'N/A',
+          timestamp: new Date().toISOString()
         });
         
         if (data && Array.isArray(data) && data.length > 0) {
           // ✅ Usar SOLO las categorías del backend
+          console.log("✅ [CATEGORÍAS] Categorías cargadas exitosamente:", data);
           setCategorias(data);
         } else {
-          console.log("⚠️ No se encontraron categorías en el backend");
+          console.log("⚠️ [CATEGORÍAS] No se encontraron categorías en el backend");
+          console.log("⚠️ [CATEGORÍAS] Data recibida:", data);
           setCategorias([]); // ✅ Array vacío, NO fallback hardcodeado
         }
       } catch (error) {
-        console.error("❌ Error cargando categorías:", error);
+        console.error("❌ [CATEGORÍAS] Error cargando categorías:", error);
+        console.error("❌ [CATEGORÍAS] Error completo:", error);
         setCategorias([]); // ✅ Array vacío en caso de error, NO fallback hardcodeado
       } finally {
         setLoading(false);
@@ -70,9 +76,19 @@ export function CategoriesGrid() {
         <div className="container mx-auto px-4 text-center">
           <div className="text-gray-400 text-6xl mb-4">📋</div>
           <h2 className="text-2xl font-bold text-white mb-4">No hay categorías disponibles</h2>
-          <p className="text-gray-400">
+          <p className="text-gray-400 mb-4">
             Las categorías aparecerán aquí una vez que se agreguen productos desde el panel de administración.
           </p>
+          
+          {/* Debug Info - Solo en desarrollo */}
+          {process.env.NODE_ENV === 'development' && debugInfo && (
+            <div className="mt-8 p-4 bg-red-900/20 border border-red-500/30 rounded-lg text-red-200 text-sm max-w-4xl mx-auto">
+              <h3 className="font-bold mb-2">🔍 Debug Info - CATEGORÍAS VACÍAS:</h3>
+              <pre className="text-xs overflow-auto">
+                {JSON.stringify(debugInfo, null, 2)}
+              </pre>
+            </div>
+          )}
         </div>
       </section>
     );
@@ -93,7 +109,7 @@ export function CategoriesGrid() {
         {/* Debug Info - Solo en desarrollo */}
         {process.env.NODE_ENV === 'development' && debugInfo && (
           <div className="mb-8 p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg text-blue-200 text-sm">
-            <h3 className="font-bold mb-2">🔍 Debug Info:</h3>
+            <h3 className="font-bold mb-2">🔍 Debug Info - CATEGORÍAS CARGADAS:</h3>
             <pre className="text-xs overflow-auto">
               {JSON.stringify(debugInfo, null, 2)}
             </pre>

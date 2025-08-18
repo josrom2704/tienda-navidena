@@ -8,49 +8,8 @@ export const RECOMMENDATION_CONFIG = {
   defaultDomain: "tiendanavidena",
   
   // Configuración de fallback
-  enableFallback: true,
-  fallbackProducts: [
-    {
-      id: 1,
-      name: "Canasta Premium Navideña",
-      description: "Vino tinto reserva, chocolates gourmet y decoración navideña de lujo",
-      price: 80,
-      originalPrice: 100,
-      image: "/placeholder.svg?height=400&width=400",
-      category: "Canastas con Vino",
-      featured: true,
-    },
-    {
-      id: 2,
-      name: "Arreglo Floral Navideño Exclusivo",
-      description: "Rosas rojas premium, flores blancas y decoración dorada artesanal",
-      price: 68,
-      originalPrice: 90,
-      image: "/placeholder.svg?height=400&width=400",
-      category: "Flores",
-      featured: true,
-    },
-    {
-      id: 3,
-      name: "Canasta Frutal Deluxe",
-      description: "Frutas frescas premium importadas y frutos secos selectos",
-      price: 120,
-      originalPrice: 160,
-      image: "/placeholder.svg?height=400&width=400",
-      category: "Canastas Frutales",
-      featured: true,
-    },
-    {
-      id: 4,
-      name: "Regalo Corporativo Elegante",
-      description: "Whisky premium escocés, chocolates belgas y tarjeta personalizada",
-      price: 45,
-      originalPrice: 58,
-      image: "/placeholder.svg?height=400&width=400",
-      category: "Canastas con Whisky",
-      featured: true,
-    },
-  ],
+  enableFallback: false, // ✅ DESHABILITADO fallback con productos hardcodeados
+  fallbackProducts: [], // ✅ ARRAY VACÍO - NO más productos hardcodeados
   
   // Configuración de mapeo de campos de la base de datos
   fieldMapping: {
