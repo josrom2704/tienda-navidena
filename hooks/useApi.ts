@@ -79,6 +79,7 @@ export function useApi() {
       console.log("🔍 [getProductosByCategoria] Dominio recibido:", dominio);
       console.log("🔍 [getProductosByCategoria] Categoría recibida:", categoria);
       console.log("🔍 [getProductosByCategoria] Tipo de categoría:", typeof categoria);
+      console.log("🔍 [getProductosByCategoria] Categoría exacta:", JSON.stringify(categoria));
       
       // ✅ SOLUCIÓN DEFINITIVA: Usar floristeriaId que sabemos que funciona
       const floristeriaId = '68a125df2097950ec3ff19fa';
@@ -86,6 +87,7 @@ export function useApi() {
       
       console.log("🔍 [getProductosByCategoria] URL completa:", url);
       console.log("🔍 [getProductosByCategoria] Parámetros enviados: floristeriaId=", floristeriaId, "categoria=", categoria);
+      console.log("🔍 [getProductosByCategoria] Categoría encoded:", encodeURIComponent(categoria));
       
       const response = await fetch(url);
       
@@ -95,6 +97,7 @@ export function useApi() {
       
       const data = await response.json();
       console.log("✅ [getProductosByCategoria] Productos obtenidos:", data.length);
+      console.log("✅ [getProductosByCategoria] Respuesta completa:", data);
       
       return Array.isArray(data) ? data : [];
       

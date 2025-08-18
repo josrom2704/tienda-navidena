@@ -18,7 +18,24 @@ type Producto = {
 };
 
 function prettifyLabel(slug: string) {
-  // normaliza: quita %20 y -, capitaliza
+  // ✅ CORRECCIÓN: Convertir slug a categoría real de la BD
+  const slugToCategoria: { [key: string]: string } = {
+    'canastas-con-vino': 'Canastas con vino',
+    'canastas-con-whisky': 'Canastas con whisky',
+    'canastas-sin-licor': 'Canastas sin licor',
+    'regalos-navidenos': 'Regalos navideños',
+    'detalles-pequenos': 'Detalles pequeños',
+    'canastas-frutales': 'Canastas frutales',
+    'flores': 'Flores',
+    'ramos': 'Ramos'
+  };
+  
+  // ✅ Buscar en el mapeo primero
+  if (slugToCategoria[slug]) {
+    return slugToCategoria[slug];
+  }
+  
+  // ✅ Fallback: normalizar como antes
   const cleaned = slug.replace(/%20/g, " ").replace(/-/g, " ");
   return cleaned.replace(/\b\w/g, (c) => c.toUpperCase());
 }
