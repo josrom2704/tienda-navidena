@@ -23,25 +23,37 @@ export const useApi = () => {
     return res.json();
   }, [authHeaders]);
 
-  // ✅ Categorías por dominio - USANDO API REAL DEL BACKEND
-  const getCategoriasByDominio = useCallback(async (dominio: string) => {
+  // ✅ Obtener categorías por dominio
+  const getCategoriasByDominio = useCallback(async (dominio: string): Promise<string[]> => {
     if (!dominio) {
-      console.error("❌ [GET categorías] Dominio vacío, usando fallback");
-      dominio = 'tiendanavidena.vercel.app';
+      console.log("⚠️ [getCategoriasByDominio] Dominio vacío, usando fallback");
+      dominio = "tiendanavidena.vercel.app";
     }
-    
-    const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.CATEGORIAS)}?dominio=${encodeURIComponent(dominio)}`;
-    console.log("[GET categorías] URL:", url);
-    console.log("[GET categorías] Dominio:", dominio);
-    
-    const res = await fetch(url, { headers: authHeaders() });
-    if (!res.ok) {
-      const txt = await res.text().catch(() => "");
-      console.error("[GET categorías] status:", res.status, res.statusText, "body:", txt);
-      throw new Error(`Error al obtener categorías (${res.status}): ${txt}`);
+
+    try {
+      console.log("🔍 [getCategoriasByDominio] Iniciando llamada para dominio:", dominio);
+      
+      // ✅ CAMBIO: Usar 'url' en lugar de 'dominio' para que funcione con el backend
+      const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.CATEGORIAS)}?url=${encodeURIComponent(dominio)}`;
+      console.log("🔍 [getCategoriasByDominio] URL completa:", url);
+      
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log("✅ [getCategoriasByDominio] Respuesta del backend:", data);
+      console.log("📊 [getCategoriasByDominio] Tipo:", typeof data, "Longitud:", Array.isArray(data) ? data.length : 'No es array');
+      
+      return Array.isArray(data) ? data : [];
+      
+    } catch (error) {
+      console.error("❌ [getCategoriasByDominio] Error:", error);
+      return [];
     }
-    return res.json() as Promise<string[]>;
-  }, [authHeaders]);
+  }, []);
 
   // ✅ Productos por dominio + categoría - CORREGIDO PARA USAR PARÁMETROS CORRECTOS DEL BACKEND
   const getProductosByCategoria = useCallback(async (dominio: string, categoria: string) => {
