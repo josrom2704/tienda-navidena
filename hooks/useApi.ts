@@ -1,8 +1,22 @@
 // /hooks/useApi.ts
 import { useCallback } from 'react';
-import { BACKEND_CONFIG, getBackendUrl } from '@/lib/backend-config';
+import { getBackendUrl, BACKEND_CONFIG } from '@/lib/backend-config';
 
-export const useApi = () => {
+// ✅ Tipos para la API
+export interface Producto {
+  _id: string;
+  nombre: string;
+  descripcion: string;
+  precio: number;
+  stock: number;
+  categoria: string;
+  floristeria: string;
+  imagen?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export function useApi() {
   const DEV_TOKEN =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzU0NjEyNjUyLCJleHAiOjE3NTQ2MjcwNTJ9.WzTpRBuo1iGFop5KnvH-VJerVVT5wI_WlWuWGmQ1HrM";
 
@@ -80,29 +94,39 @@ export const useApi = () => {
     return data;
   }, [authHeaders]);
 
-  // ✅ Productos por dominio (catálogo completo) - CORREGIDO PARA USAR PARÁMETROS CORRECTOS DEL BACKEND
-  const getProductosAll = useCallback(async (dominio: string) => {
+  // ✅ Productos por dominio - REVERTIDO PARA USAR URL (backend ya corregido)
+  const getProductosAll = useCallback(async (dominio: string): Promise<Producto[]> => {
     if (!dominio) {
-      console.error("❌ [GET todos los productos] Dominio vacío, usando fallback");
-      dominio = 'tiendanavidena.vercel.app';
+      console.log("⚠️ [getProductosAll] Dominio vacío, usando fallback");
+      dominio = "tiendanavidena.vercel.app";
     }
-    
-    // ✅ CAMBIO: Según el backend, debe usar 'url' para el dominio
-    const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.PRODUCTOS)}?url=${encodeURIComponent(dominio)}`;
-    console.log("[GET todos los productos] URL:", url);
-    console.log("[GET todos los productos] Dominio:", dominio);
-    
-    const res = await fetch(url, { headers: authHeaders() });
-    if (!res.ok) {
-      const txt = await res.text().catch(() => "");
-      console.error("[GET todos los productos] status:", res.status, res.statusText, "body:", txt);
-      throw new Error(`Error al obtener productos (${res.status})`);
+
+    try {
+      console.log("🔍 [getProductosAll] Iniciando llamada para dominio:", dominio);
+      
+      // ✅ REVERTIDO: Usar 'url' ya que el backend ahora funciona correctamente
+      const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.PRODUCTOS)}?url=${encodeURIComponent(dominio)}`;
+      
+      console.log("🔍 [getProductosAll] URL completa:", url);
+      console.log("🔍 [getProductosAll] Usando parámetro url:", dominio);
+      
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log("✅ [getProductosAll] Respuesta del backend:", data);
+      console.log("📊 [getProductosAll] Tipo:", typeof data, "Longitud:", Array.isArray(data) ? data.length : 'No es array');
+      
+      return Array.isArray(data) ? data : [];
+      
+    } catch (error) {
+      console.error("❌ [getProductosAll] Error:", error);
+      return [];
     }
-    
-    const data = await res.json();
-    console.log("[GET todos los productos] Respuesta:", data);
-    return data;
-  }, [authHeaders]);
+  }, []);
 
   return {
     getFloristerias,
