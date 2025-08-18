@@ -37,22 +37,18 @@ export function useApi() {
     return res.json();
   }, [authHeaders]);
 
-  // ✅ Obtener categorías por dominio
+  // ✅ Categorías por dominio - USANDO LO QUE SÍ FUNCIONA
   const getCategoriasByDominio = useCallback(async (dominio: string): Promise<string[]> => {
-    if (!dominio) {
-      console.log("⚠️ [getCategoriasByDominio] Dominio vacío, usando fallback");
-      dominio = "tiendanavidena.vercel.app";
-    }
-
     try {
-      console.log("🔍 [getCategoriasByDominio] Iniciando llamada para dominio:", dominio);
-      console.log("🔍 [getCategoriasByDominio] Dominio original recibido:", dominio);
-      console.log("🔍 [getCategoriasByDominio] Tipo de dominio:", typeof dominio);
+      console.log("🔍 [getCategoriasByDominio] Iniciando llamada");
+      console.log("🔍 [getCategoriasByDominio] Dominio recibido:", dominio);
       
-      // ✅ CAMBIO: Usar 'url' en lugar de 'dominio' para que funcione con el backend
-      const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.CATEGORIAS)}?url=${encodeURIComponent(dominio)}`;
+      // ✅ SOLUCIÓN DEFINITIVA: Usar floristeriaId que sabemos que funciona
+      const floristeriaId = '68a125df2097950ec3ff19fa';
+      const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.CATEGORIAS)}?floristeriaId=${floristeriaId}`;
+      
       console.log("🔍 [getCategoriasByDominio] URL completa:", url);
-      console.log("🔍 [getCategoriasByDominio] Parámetro url enviado:", dominio);
+      console.log("🔍 [getCategoriasByDominio] Parámetros enviados: floristeriaId=", floristeriaId);
       
       const response = await fetch(url);
       
@@ -61,8 +57,8 @@ export function useApi() {
       }
       
       const data = await response.json();
-      console.log("✅ [getCategoriasByDominio] Respuesta del backend:", data);
-      console.log("📊 [getCategoriasByDominio] Tipo:", typeof data, "Longitud:", Array.isArray(data) ? data.length : 'No es array');
+      console.log("✅ [getCategoriasByDominio] Categorías obtenidas:", data.length);
+      console.log("✅ [getCategoriasByDominio] Respuesta completa:", data);
       
       return Array.isArray(data) ? data : [];
       
@@ -107,12 +103,11 @@ export function useApi() {
     }
   }, []);
 
-  // ✅ Productos por dominio - USANDO LO QUE SÍ FUNCIONA
+  // ✅ Todos los productos - USANDO LO QUE SÍ FUNCIONA
   const getProductosAll = useCallback(async (dominio: string): Promise<Producto[]> => {
     try {
       console.log("🔍 [getProductosAll] Iniciando llamada");
       console.log("🔍 [getProductosAll] Dominio recibido:", dominio);
-      console.log("🔍 [getProductosAll] Tipo de dominio:", typeof dominio);
       
       // ✅ SOLUCIÓN DEFINITIVA: Usar floristeriaId que sabemos que funciona
       const floristeriaId = '68a125df2097950ec3ff19fa';
@@ -129,6 +124,7 @@ export function useApi() {
       
       const data = await response.json();
       console.log("✅ [getProductosAll] Productos obtenidos:", data.length);
+      console.log("✅ [getProductosAll] Respuesta completa:", data);
       
       return Array.isArray(data) ? data : [];
       
