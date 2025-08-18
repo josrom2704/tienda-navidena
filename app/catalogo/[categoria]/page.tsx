@@ -13,6 +13,7 @@ type Producto = {
   precio: number | string;
   imagen?: string;
   categoria: string;
+  stock?: number;
 };
 
 const LABELS: Record<string, string> = {
@@ -23,6 +24,13 @@ const LABELS: Record<string, string> = {
   "detalles-pequenos": "Detalles Pequeños",
   "canastas-frutales": "Canastas Frutales",
   flores: "Flores",
+  // ✅ Categorías adicionales del backend
+  "canastas con vino": "Canastas con Vino",
+  "canastas con whisky": "Canastas con Whisky",
+  "canastas sin licor": "Canastas sin Licor",
+  "regalos navideños": "Regalos Navideños",
+  "detalles pequeños": "Detalles Pequeños",
+  "canastas frutales": "Canastas Frutales",
 };
 
 function prettifyLabel(slug: string) {
@@ -43,22 +51,38 @@ export default function CategoriaPage() {
   const { getProductosByCategoria } = useApi();
   const [items, setItems] = useState<Producto[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const dominio = window.location.hostname.toLowerCase();
     const ac = new AbortController();
+    
     (async () => {
       try {
         setLoading(true);
+        setError(null);
+        console.log("🔍 Cargando productos para categoría:", slugDecoded);
+        console.log("🔍 Dominio:", dominio);
+        
         // 👇 pasa el slug DECODIFICADO al API (luego ahí se encodea 1 sola vez)
         const data: Producto[] = await getProductosByCategoria(dominio, slugDecoded);
-        if (!ac.signal.aborted) setItems(data);
+        console.log("✅ Productos cargados del backend para categoría:", data);
+        
+        if (!ac.signal.aborted) {
+          setItems(data);
+        }
       } catch (e) {
-        if (!ac.signal.aborted) console.error(e);
+        if (!ac.signal.aborted) {
+          console.error("❌ Error cargando productos por categoría:", e);
+          setError("Error al cargar los productos de esta categoría. Por favor, intenta de nuevo.");
+        }
       } finally {
-        if (!ac.signal.aborted) setLoading(false);
+        if (!ac.signal.aborted) {
+          setLoading(false);
+        }
       }
     })();
+    
     return () => ac.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slugDecoded]);
@@ -73,9 +97,26 @@ export default function CategoriaPage() {
       </div>
 
       {loading ? (
-        <div className="text-gray-400">Cargando productos…</div>
+        <div className="flex justify-center items-center py-12">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-500"></div>
+        </div>
+      ) : error ? (
+        <div className="text-center py-12">
+          <div className="text-red-500 text-xl mb-4">⚠️</div>
+          <p className="text-red-600 mb-4">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+          >
+            Reintentar
+          </button>
+        </div>
       ) : items.length === 0 ? (
-        <p className="text-gray-400">No hay productos aún en esta categoría.</p>
+        <div className="text-center py-12">
+          <div className="text-gray-400 text-6xl mb-4">🌸</div>
+          <p className="text-gray-400 text-xl mb-2">No hay productos en esta categoría</p>
+          <p className="text-gray-500">Los productos aparecerán aquí una vez que sean agregados desde el panel de administración.</p>
+        </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {items.map((p) => (

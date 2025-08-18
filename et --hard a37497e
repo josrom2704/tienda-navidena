@@ -1,0 +1,5 @@
+[33m6301cd1[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m fix: mejorar lógica de filtrado por categoría - Mapeo exacto de categorías para evitar fallos - Comparación robusta entre slug y nombre de categoría - Soluciona problema de productos no mostrándose en categorías correctas
+[33m8fde8e6[m fix: implementar filtrado por categoría en frontend - Soluciona problema de productos mostrándose en categorías incorrectas - Filtrado se hace en cliente ya que API de Render no soporta filtros por categoría
+[33ma37497e[m ✅ Backend conectado - Productos reales funcionando
+[33md11095e[m Update domain to new Vercel URL
+[33m73779a4[m Eliminar APIs hardcodeadas - usar backend de Render

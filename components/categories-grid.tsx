@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useApi } from "@/hooks/useApi";
 
+// ✅ META dinámico basado en categorías del backend
 const META: Record<string, { label: string; description: string; icon: string }> = {
   "canastas-vino": { label: "Canastas con Vino", description: "Selección premium de vinos y acompañamientos de lujo", icon: "🍷" },
   "canastas-whisky": { label: "Canastas con Whisky", description: "Whiskys selectos y complementos gourmet exclusivos", icon: "🥃" },
@@ -14,6 +15,13 @@ const META: Record<string, { label: string; description: string; icon: string }>
   "detalles-pequenos": { label: "Detalles Pequeños", description: "Pequeños gestos con gran elegancia y significado", icon: "✨" },
   "canastas-frutales": { label: "Canastas Frutales", description: "Frutas frescas premium y frutos secos selectos", icon: "🍎" },
   "flores": { label: "Flores", description: "Arreglos florales únicos y elegantes de alta calidad", icon: "🌹" },
+  // ✅ Categorías adicionales que pueden venir del backend
+  "canastas con vino": { label: "Canastas con Vino", description: "Selección premium de vinos y acompañamientos de lujo", icon: "🍷" },
+  "canastas con whisky": { label: "Canastas con Whisky", description: "Whiskys selectos y complementos gourmet exclusivos", icon: "🥃" },
+  "canastas sin licor": { label: "Canastas sin Licor", description: "Deliciosas opciones premium para toda la familia", icon: "🍫" },
+  "regalos navideños": { label: "Regalos Navideños", description: "Artículos especiales de lujo para la temporada", icon: "🎁" },
+  "detalles pequeños": { label: "Detalles Pequeños", description: "Pequeños gestos con gran elegancia y significado", icon: "✨" },
+  "canastas frutales": { label: "Canastas Frutales", description: "Frutas frescas premium y frutos secos selectos", icon: "🍎" },
 };
 
 export function CategoriesGrid() {
@@ -25,10 +33,22 @@ export function CategoriesGrid() {
     const dominio = window.location.hostname;
     (async () => {
       try {
+        console.log("🔍 Cargando categorías para dominio:", dominio);
         const data = await getCategoriasByDominio(dominio);
-        setSlugs(data.length ? data : Object.keys(META));
-      } catch {
-        setSlugs(Object.keys(META)); // fallback si no hay productos aún
+        console.log("✅ Categorías cargadas del backend:", data);
+        
+        if (data && data.length > 0) {
+          setSlugs(data);
+        } else {
+          console.log("⚠️ No se encontraron categorías, usando fallback");
+          // ✅ FALLBACK: Solo categorías básicas si no hay datos del backend
+          setSlugs(["flores", "canastas con vino", "canastas con whisky", "canastas sin licor"]);
+        }
+      } catch (error) {
+        console.error("❌ Error cargando categorías:", error);
+        console.log("⚠️ Usando categorías de fallback por error");
+        // ✅ FALLBACK: Categorías básicas en caso de error
+        setSlugs(["flores", "canastas con vino", "canastas con whisky", "canastas sin licor"]);
       } finally {
         setLoading(false);
       }
@@ -57,8 +77,17 @@ export function CategoriesGrid() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {slugs.map((slug, index) => {
-            const meta = META[slug] || { label: slug.replaceAll("-", " "), description: "Colección especial", icon: "⭐" };
-            const href = `/catalogo/${slug}`;
+            // ✅ Lógica mejorada para obtener metadata de categoría
+            const meta = META[slug] || META[slug.toLowerCase()] || { 
+              label: slug.replaceAll("-", " ").replace(/\b\w/g, c => c.toUpperCase()), 
+              description: "Colección especial de productos premium", 
+              icon: "⭐" 
+            };
+            
+            // ✅ Generar slug para la URL (normalizar espacios y caracteres especiales)
+            const urlSlug = slug.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+            const href = `/catalogo/${urlSlug}`;
+            
             return (
               <Link key={href} href={href}>
                 <Card
