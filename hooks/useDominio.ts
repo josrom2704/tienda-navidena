@@ -22,6 +22,11 @@ export function useDominio() {
       dominioFinal = hostname;
     }
     
+    // ✅ CORRECCIÓN: Asegurar que se use el dominio completo
+    if (dominioFinal === 'vercel.app') {
+      dominioFinal = 'tiendanavidena.vercel.app';
+    }
+    
     console.log("🌐 Dominio detectado:", { hostname, dominioFinal });
     setDominio(dominioFinal);
   }, []);

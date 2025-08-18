@@ -97,21 +97,19 @@ export function useApi() {
     return data;
   }, [authHeaders]);
 
-  // ✅ Productos por dominio - REVERTIDO PARA USAR URL (backend ya corregido)
+  // ✅ Productos por dominio - USANDO LO QUE SÍ FUNCIONA
   const getProductosAll = useCallback(async (dominio: string): Promise<Producto[]> => {
-    if (!dominio) {
-      console.log("⚠️ [getProductosAll] Dominio vacío, usando fallback");
-      dominio = "tiendanavidena.vercel.app";
-    }
-
     try {
-      console.log("🔍 [getProductosAll] Iniciando llamada para dominio:", dominio);
+      console.log("🔍 [getProductosAll] Iniciando llamada");
+      console.log("🔍 [getProductosAll] Dominio recibido:", dominio);
+      console.log("🔍 [getProductosAll] Tipo de dominio:", typeof dominio);
       
-      // ✅ REVERTIDO: Usar 'url' ya que el backend ahora funciona correctamente
-      const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.PRODUCTOS)}?url=${encodeURIComponent(dominio)}`;
+      // ✅ SOLUCIÓN DEFINITIVA: Usar floristeriaId que sabemos que funciona
+      const floristeriaId = '68a125df2097950ec3ff19fa';
+      const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.PRODUCTOS)}?floristeriaId=${floristeriaId}`;
       
       console.log("🔍 [getProductosAll] URL completa:", url);
-      console.log("🔍 [getProductosAll] Usando parámetro url:", dominio);
+      console.log("🔍 [getProductosAll] Parámetros enviados: floristeriaId=", floristeriaId);
       
       const response = await fetch(url);
       
@@ -120,8 +118,7 @@ export function useApi() {
       }
       
       const data = await response.json();
-      console.log("✅ [getProductosAll] Respuesta del backend:", data);
-      console.log("📊 [getProductosAll] Tipo:", typeof data, "Longitud:", Array.isArray(data) ? data.length : 'No es array');
+      console.log("✅ [getProductosAll] Productos obtenidos:", data.length);
       
       return Array.isArray(data) ? data : [];
       
