@@ -7,30 +7,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useApi } from "@/hooks/useApi";
 import { useDominio } from "@/hooks/useDominio";
 
-// ✅ META dinámico basado en categorías del backend
-const META: Record<string, { label: string; description: string; icon: string }> = {
-  "canastas-vino": { label: "Canastas con Vino", description: "Selección premium de vinos y acompañamientos de lujo", icon: "🍷" },
-  "canastas-whisky": { label: "Canastas con Whisky", description: "Whiskys selectos y complementos gourmet exclusivos", icon: "🥃" },
-  "canastas-sin-licor": { label: "Canastas sin Licor", description: "Deliciosas opciones premium para toda la familia", icon: "🍫" },
-  "regalos-navidenos": { label: "Regalos Navideños", description: "Artículos especiales de lujo para la temporada", icon: "🎁" },
-  "detalles-pequenos": { label: "Detalles Pequeños", description: "Pequeños gestos con gran elegancia y significado", icon: "✨" },
-  "canastas-frutales": { label: "Canastas Frutales", description: "Frutas frescas premium y frutos secos selectos", icon: "🍎" },
-  "flores": { label: "Flores", description: "Arreglos florales únicos y elegantes de alta calidad", icon: "🌹" },
-  // ✅ Categorías adicionales que pueden venir del backend
-  "canastas con vino": { label: "Canastas con Vino", description: "Selección premium de vinos y acompañamientos de lujo", icon: "🍷" },
-  "canastas con whisky": { label: "Canastas con Whisky", description: "Whiskys selectos y complementos gourmet exclusivos", icon: "🥃" },
-  "canastas sin licor": { label: "Canastas sin Licor", description: "Deliciosas opciones premium para toda la familia", icon: "🍫" },
-  "regalos navideños": { label: "Regalos Navideños", description: "Artículos especiales de lujo para la temporada", icon: "🎁" },
-  "detalles pequeños": { label: "Detalles Pequeños", description: "Pequeños gestos con gran elegancia y significado", icon: "✨" },
-  "canastas frutales": { label: "Canastas Frutales", description: "Frutas frescas premium y frutos secos selectos", icon: "🍎" },
-  // ✅ Categorías adicionales del backend
-  "ramos": { label: "Ramos", description: "Hermosos ramos de flores frescas", icon: "🌹" },
-};
-
 export function CategoriesGrid() {
   const { getCategoriasByDominio } = useApi();
   const dominio = useDominio();
-  const [slugs, setSlugs] = useState<string[]>([]);
+  const [categorias, setCategorias] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [debugInfo, setDebugInfo] = useState<any>(null);
 
@@ -58,17 +38,15 @@ export function CategoriesGrid() {
         });
         
         if (data && Array.isArray(data) && data.length > 0) {
-          setSlugs(data);
+          // ✅ Usar SOLO las categorías del backend
+          setCategorias(data);
         } else {
-          console.log("⚠️ No se encontraron categorías, usando fallback");
-          // ✅ FALLBACK: Solo categorías básicas si no hay datos del backend
-          setSlugs(["flores", "canastas con vino", "canastas con whisky", "canastas sin licor", "regalos navideños"]);
+          console.log("⚠️ No se encontraron categorías en el backend");
+          setCategorias([]); // ✅ Array vacío, NO fallback hardcodeado
         }
       } catch (error) {
         console.error("❌ Error cargando categorías:", error);
-        console.log("⚠️ Usando categorías de fallback por error");
-        // ✅ FALLBACK: Categorías básicas en caso de error
-        setSlugs(["flores", "canastas con vino", "canastas con whisky", "canastas sin licor", "regalos navideños"]);
+        setCategorias([]); // ✅ Array vacío en caso de error, NO fallback hardcodeado
       } finally {
         setLoading(false);
       }
@@ -80,6 +58,21 @@ export function CategoriesGrid() {
       <section className="py-20 bg-gradient-to-b from-black to-gray-900">
         <div className="container mx-auto px-4 text-gray-300">
           {!dominio ? "Cargando dominio..." : "Cargando categorías…"}
+        </div>
+      </section>
+    );
+  }
+
+  // ✅ Si no hay categorías, mostrar mensaje apropiado
+  if (categorias.length === 0) {
+    return (
+      <section className="py-20 bg-gradient-to-b from-black to-gray-900">
+        <div className="container mx-auto px-4 text-center">
+          <div className="text-gray-400 text-6xl mb-4">📋</div>
+          <h2 className="text-2xl font-bold text-white mb-4">No hay categorías disponibles</h2>
+          <p className="text-gray-400">
+            Las categorías aparecerán aquí una vez que se agreguen productos desde el panel de administración.
+          </p>
         </div>
       </section>
     );
@@ -108,17 +101,21 @@ export function CategoriesGrid() {
         )}
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {slugs.map((slug, index) => {
-            // ✅ Lógica mejorada para obtener metadata de categoría
-            const meta = META[slug] || META[slug.toLowerCase()] || { 
-              label: slug.replaceAll("-", " ").replace(/\b\w/g, c => c.toUpperCase()), 
-              description: "Colección especial de productos premium", 
-              icon: "⭐" 
-            };
-            
+          {categorias.map((categoria, index) => {
             // ✅ Generar slug para la URL (normalizar espacios y caracteres especiales)
-            const urlSlug = slug.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+            const urlSlug = categoria.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
             const href = `/catalogo/${urlSlug}`;
+            
+            // ✅ Icono dinámico basado en el nombre de la categoría
+            const getIcon = (cat: string) => {
+              const lowerCat = cat.toLowerCase();
+              if (lowerCat.includes('vino') || lowerCat.includes('whisky') || lowerCat.includes('licor')) return '🍷';
+              if (lowerCat.includes('flor') || lowerCat.includes('rama')) return '🌹';
+              if (lowerCat.includes('regalo') || lowerCat.includes('navideño')) return '🎁';
+              if (lowerCat.includes('fruta')) return '🍎';
+              if (lowerCat.includes('detalle')) return '✨';
+              return '⭐';
+            };
             
             return (
               <Link key={href} href={href}>
@@ -129,19 +126,21 @@ export function CategoriesGrid() {
                   <div className="relative overflow-hidden">
                     <img
                       src={"/placeholder.svg?height=300&width=400"}
-                      alt={meta.label}
+                      alt={categoria}
                       className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                     <div className="absolute top-4 right-4 w-12 h-12 bg-gold-400/90 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                      <span className="text-2xl">{meta.icon}</span>
+                      <span className="text-2xl">{getIcon(categoria)}</span>
                     </div>
                   </div>
                   <CardContent className="p-6 bg-black">
                     <h3 className="text-xl font-playfair font-semibold text-white mb-3 group-hover:text-gold-400 transition-colors duration-300">
-                      {meta.label}
+                      {categoria}
                     </h3>
-                    <p className="text-gray-400 text-sm font-light leading-relaxed">{meta.description}</p>
+                    <p className="text-gray-400 text-sm font-light leading-relaxed">
+                      Descubre nuestra selección especial de {categoria.toLowerCase()}
+                    </p>
                     <div className="mt-4 h-px bg-gradient-to-r from-transparent via-gold-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </CardContent>
                 </Card>

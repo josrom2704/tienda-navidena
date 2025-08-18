@@ -17,23 +17,6 @@ type Producto = {
   stock?: number;
 };
 
-const LABELS: Record<string, string> = {
-  "canastas-vino": "Canastas con Vino",
-  "canastas-whisky": "Canastas con Whisky",
-  "canastas-sin-licor": "Canastas sin Licor",
-  "regalos-navidenos": "Regalos Navideños",
-  "detalles-pequenos": "Detalles Pequeños",
-  "canastas-frutales": "Canastas Frutales",
-  flores: "Flores",
-  // ✅ Categorías adicionales del backend
-  "canastas con vino": "Canastas con Vino",
-  "canastas con whisky": "Canastas con Whisky",
-  "canastas sin licor": "Canastas sin Licor",
-  "regalos navideños": "Regalos Navideños",
-  "detalles pequeños": "Detalles Pequeños",
-  "canastas frutales": "Canastas Frutales",
-};
-
 function prettifyLabel(slug: string) {
   // normaliza: quita %20 y -, capitaliza
   const cleaned = slug.replace(/%20/g, " ").replace(/-/g, " ");
@@ -47,7 +30,8 @@ export default function CategoriaPage() {
   // 👇 MUY IMPORTANTE: decodifica antes de usar
   const slugDecoded = decodeURIComponent(rawParam); // p.ej. "canastas con whisky"
 
-  const label = LABELS[slugDecoded] || LABELS[rawParam] || prettifyLabel(slugDecoded);
+  // ✅ Usar SOLO el nombre de la categoría del backend, NO hardcodeado
+  const label = prettifyLabel(slugDecoded);
 
   const { getProductosByCategoria } = useApi();
   const dominio = useDominio();
