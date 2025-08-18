@@ -22,12 +22,15 @@ const META: Record<string, { label: string; description: string; icon: string }>
   "regalos navideños": { label: "Regalos Navideños", description: "Artículos especiales de lujo para la temporada", icon: "🎁" },
   "detalles pequeños": { label: "Detalles Pequeños", description: "Pequeños gestos con gran elegancia y significado", icon: "✨" },
   "canastas frutales": { label: "Canastas Frutales", description: "Frutas frescas premium y frutos secos selectos", icon: "🍎" },
+  // ✅ Categorías adicionales del backend
+  "ramos": { label: "Ramos", description: "Hermosos ramos de flores frescas", icon: "🌹" },
 };
 
 export function CategoriesGrid() {
   const { getCategoriasByDominio } = useApi();
   const [slugs, setSlugs] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [debugInfo, setDebugInfo] = useState<any>(null);
 
   useEffect(() => {
     const dominio = window.location.hostname;
@@ -36,19 +39,30 @@ export function CategoriesGrid() {
         console.log("🔍 Cargando categorías para dominio:", dominio);
         const data = await getCategoriasByDominio(dominio);
         console.log("✅ Categorías cargadas del backend:", data);
+        console.log("📊 Tipo de datos:", typeof data);
+        console.log("📊 Longitud:", Array.isArray(data) ? data.length : 'No es array');
+        console.log("📊 Contenido completo:", JSON.stringify(data, null, 2));
         
-        if (data && data.length > 0) {
+        setDebugInfo({
+          dominio,
+          categorias: data,
+          tipo: typeof data,
+          esArray: Array.isArray(data),
+          longitud: Array.isArray(data) ? data.length : 'N/A'
+        });
+        
+        if (data && Array.isArray(data) && data.length > 0) {
           setSlugs(data);
         } else {
           console.log("⚠️ No se encontraron categorías, usando fallback");
           // ✅ FALLBACK: Solo categorías básicas si no hay datos del backend
-          setSlugs(["flores", "canastas con vino", "canastas con whisky", "canastas sin licor"]);
+          setSlugs(["flores", "canastas con vino", "canastas con whisky", "canastas sin licor", "regalos navideños"]);
         }
       } catch (error) {
         console.error("❌ Error cargando categorías:", error);
         console.log("⚠️ Usando categorías de fallback por error");
         // ✅ FALLBACK: Categorías básicas en caso de error
-        setSlugs(["flores", "canastas con vino", "canastas con whisky", "canastas sin licor"]);
+        setSlugs(["flores", "canastas con vino", "canastas con whisky", "canastas sin licor", "regalos navideños"]);
       } finally {
         setLoading(false);
       }
@@ -74,6 +88,16 @@ export function CategoriesGrid() {
             Cada categoría ha sido cuidadosamente curada para ofrecerte la más alta calidad y elegancia.
           </p>
         </div>
+
+        {/* Debug Info - Solo en desarrollo */}
+        {process.env.NODE_ENV === 'development' && debugInfo && (
+          <div className="mb-8 p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg text-blue-200 text-sm">
+            <h3 className="font-bold mb-2">🔍 Debug Info:</h3>
+            <pre className="text-xs overflow-auto">
+              {JSON.stringify(debugInfo, null, 2)}
+            </pre>
+          </div>
+        )}
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {slugs.map((slug, index) => {

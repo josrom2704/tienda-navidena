@@ -38,32 +38,43 @@ export const useApi = () => {
     return res.json() as Promise<string[]>;
   }, [authHeaders]);
 
-  // ✅ Productos por dominio + categoría - USANDO API REAL DEL BACKEND
+  // ✅ Productos por dominio + categoría - CORREGIDO PARA USAR PARÁMETROS CORRECTOS DEL BACKEND
   const getProductosByCategoria = useCallback(async (dominio: string, categoria: string) => {
-    // ✅ CAMBIO: Usar el parámetro 'url' en lugar de 'categoria' para el backend
+    // ✅ CAMBIO: Según el backend, debe usar 'url' para el dominio y 'categoria' para la categoría
     const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.PRODUCTOS)}?url=${encodeURIComponent(dominio)}&categoria=${encodeURIComponent(categoria)}`;
     console.log("[GET productos por categoría] URL:", url);
+    console.log("[GET productos por categoría] Dominio:", dominio);
+    console.log("[GET productos por categoría] Categoría:", categoria);
+    
     const res = await fetch(url, { headers: authHeaders() });
     if (!res.ok) {
       const txt = await res.text().catch(() => "");
-      console.error("[GET productos] status:", res.status, res.statusText, "body:", txt);
-      throw new Error(`Error al obtener productos (${res.status})`);
+      console.error("[GET productos por categoría] status:", res.status, res.statusText, "body:", txt);
+      throw new Error(`Error al obtener productos por categoría (${res.status})`);
     }
-    return res.json();
+    
+    const data = await res.json();
+    console.log("[GET productos por categoría] Respuesta:", data);
+    return data;
   }, [authHeaders]);
 
-  // ✅ Productos por dominio (catálogo completo) - USANDO API REAL DEL BACKEND
+  // ✅ Productos por dominio (catálogo completo) - CORREGIDO PARA USAR PARÁMETROS CORRECTOS DEL BACKEND
   const getProductosAll = useCallback(async (dominio: string) => {
-    // ✅ CAMBIO: Usar el parámetro 'url' para el backend
+    // ✅ CAMBIO: Según el backend, debe usar 'url' para el dominio
     const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.PRODUCTOS)}?url=${encodeURIComponent(dominio)}`;
     console.log("[GET todos los productos] URL:", url);
+    console.log("[GET todos los productos] Dominio:", dominio);
+    
     const res = await fetch(url, { headers: authHeaders() });
     if (!res.ok) {
       const txt = await res.text().catch(() => "");
       console.error("[GET todos los productos] status:", res.status, res.statusText, "body:", txt);
       throw new Error(`Error al obtener productos (${res.status})`);
     }
-    return res.json();
+    
+    const data = await res.json();
+    console.log("[GET todos los productos] Respuesta:", data);
+    return data;
   }, [authHeaders]);
 
   return {
