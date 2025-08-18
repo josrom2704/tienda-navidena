@@ -107,6 +107,35 @@ export default function Home() {
                 console.log("❌ Error obteniendo productos por ID de floristería:", error instanceof Error ? error.message : 'Error desconocido');
               }
               
+              // Test 10: Probar filtro por categoría específica
+              console.log("🧪 Test 10: Filtro por categoría 'Canastas con whisky'");
+              try {
+                const res = await fetch(`https://flores-backend-px2c.onrender.com/api/flores?floristeriaId=${floristeriaId}&categoria=Canastas con whisky`);
+                const data = await res.json();
+                console.log("✅ Productos por categoría 'Canastas con whisky':", data);
+                console.log("📊 Cantidad de productos:", Array.isArray(data) ? data.length : 'No es array');
+              } catch (error) {
+                console.log("❌ Error obteniendo productos por categoría:", error instanceof Error ? error.message : 'Error desconocido');
+              }
+              
+              // Test 11: Ver todas las categorías disponibles
+              console.log("🧪 Test 11: Ver todas las categorías disponibles");
+              try {
+                const res = await fetch(`https://flores-backend-px2c.onrender.com/api/flores?floristeriaId=${floristeriaId}`);
+                const data = await res.json();
+                if (Array.isArray(data)) {
+                  const categorias = [...new Set(data.map(p => p.categoria))];
+                  console.log("📋 Categorías disponibles:", categorias);
+                  console.log("📊 Productos por categoría:");
+                  categorias.forEach(cat => {
+                    const productos = data.filter(p => p.categoria === cat);
+                    console.log(`  - ${cat}: ${productos.length} productos`);
+                  });
+                }
+              } catch (error) {
+                console.log("❌ Error obteniendo categorías:", error instanceof Error ? error.message : 'Error desconocido');
+              }
+              
             } catch (error) {
               console.error("❌ Error en test directo:", error);
             }
