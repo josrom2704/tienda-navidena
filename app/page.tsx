@@ -80,6 +80,32 @@ export default function Home() {
                 }
               }
               
+              // Test 8: Ver qué floristería tiene el ID de los productos
+              console.log("🧪 Test 8: Verificar floristería por ID");
+              const floristeriaId = '68a125df2097950ec3ff19fa';
+              try {
+                const res = await fetch(`https://flores-backend-px2c.onrender.com/api/floristerias/${floristeriaId}`);
+                const data = await res.json();
+                console.log("🏪 Floristería por ID:", data);
+                console.log("🔍 Campos de la floristería:", Object.keys(data));
+                if (data.dominio) console.log("🌐 Campo dominio:", data.dominio);
+                if (data.url) console.log("🔗 Campo url:", data.url);
+                if (data.nombre) console.log("📛 Campo nombre:", data.nombre);
+              } catch (error) {
+                console.log("❌ Error obteniendo floristería por ID:", error instanceof Error ? error.message : 'Error desconocido');
+              }
+              
+              // Test 9: Probar con el ID de floristería directamente
+              console.log("🧪 Test 9: Productos por ID de floristería");
+              try {
+                const res = await fetch(`https://flores-backend-px2c.onrender.com/api/flores?floristeriaId=${floristeriaId}`);
+                const data = await res.json();
+                console.log("✅ Productos por ID de floristería:", data);
+                console.log("📊 Cantidad de productos:", Array.isArray(data) ? data.length : 'No es array');
+              } catch (error) {
+                console.log("❌ Error obteniendo productos por ID de floristería:", error instanceof Error ? error.message : 'Error desconocido');
+              }
+              
             } catch (error) {
               console.error("❌ Error en test directo:", error);
             }
