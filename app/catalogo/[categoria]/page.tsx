@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { ProductCard } from "@/components/product-card";
 import { useApi } from "@/hooks/useApi";
+import { useDominio } from "@/hooks/useDominio";
 import { objectIdToNumber } from "@/lib/id";
 
 type Producto = {
@@ -49,12 +50,17 @@ export default function CategoriaPage() {
   const label = LABELS[slugDecoded] || LABELS[rawParam] || prettifyLabel(slugDecoded);
 
   const { getProductosByCategoria } = useApi();
+  const dominio = useDominio();
   const [items, setItems] = useState<Producto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const dominio = window.location.hostname.toLowerCase();
+    if (!dominio) {
+      console.log("⏳ Esperando dominio...");
+      return;
+    }
+    
     const ac = new AbortController();
     
     (async () => {
@@ -85,7 +91,18 @@ export default function CategoriaPage() {
     
     return () => ac.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slugDecoded]);
+  }, [slugDecoded, dominio]); // 👈 Agregado dominio como dependencia
+
+  if (!dominio) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center py-12">
+          <div className="text-gray-400 text-6xl mb-4">🌐</div>
+          <p className="text-gray-500 text-xl mb-2">Cargando configuración...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -114,7 +131,7 @@ export default function CategoriaPage() {
       ) : items.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-gray-400 text-6xl mb-4">🌸</div>
-          <p className="text-gray-400 text-xl mb-2">No hay productos en esta categoría</p>
+          <p className="text-gray-500 text-xl mb-2">No hay productos en esta categoría</p>
           <p className="text-gray-500">Los productos aparecerán aquí una vez que sean agregados desde el panel de administración.</p>
         </div>
       ) : (

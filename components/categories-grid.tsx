@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useApi } from "@/hooks/useApi";
+import { useDominio } from "@/hooks/useDominio";
 
 // ✅ META dinámico basado en categorías del backend
 const META: Record<string, { label: string; description: string; icon: string }> = {
@@ -28,12 +29,17 @@ const META: Record<string, { label: string; description: string; icon: string }>
 
 export function CategoriesGrid() {
   const { getCategoriasByDominio } = useApi();
+  const dominio = useDominio();
   const [slugs, setSlugs] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [debugInfo, setDebugInfo] = useState<any>(null);
 
   useEffect(() => {
-    const dominio = window.location.hostname;
+    if (!dominio) {
+      console.log("⏳ Esperando dominio...");
+      return;
+    }
+
     (async () => {
       try {
         console.log("🔍 Cargando categorías para dominio:", dominio);
@@ -67,12 +73,14 @@ export function CategoriesGrid() {
         setLoading(false);
       }
     })();
-  }, [getCategoriasByDominio]);
+  }, [getCategoriasByDominio, dominio]);
 
-  if (loading) {
+  if (loading || !dominio) {
     return (
       <section className="py-20 bg-gradient-to-b from-black to-gray-900">
-        <div className="container mx-auto px-4 text-gray-300">Cargando categorías…</div>
+        <div className="container mx-auto px-4 text-gray-300">
+          {!dominio ? "Cargando dominio..." : "Cargando categorías…"}
+        </div>
       </section>
     );
   }

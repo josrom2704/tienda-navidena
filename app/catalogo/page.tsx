@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ProductCard } from "@/components/product-card";
 import { useApi } from "@/hooks/useApi";
+import { useDominio } from "@/hooks/useDominio";
 import { objectIdToNumber } from "@/lib/id";
 
 type Producto = {
@@ -17,12 +18,17 @@ type Producto = {
 
 export default function CatalogoPage() {
   const { getProductosAll } = useApi();
+  const dominio = useDominio();
   const [items, setItems] = useState<Producto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const dominio = window.location.hostname.toLowerCase();
+    if (!dominio) {
+      console.log("⏳ Esperando dominio...");
+      return;
+    }
+
     const ac = new AbortController();
 
     (async () => {
@@ -51,7 +57,18 @@ export default function CatalogoPage() {
 
     return () => ac.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // 👈 sin funciones en deps
+  }, [dominio]); // 👈 Agregado dominio como dependencia
+
+  if (!dominio) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center py-12">
+          <div className="text-gray-400 text-6xl mb-4">🌐</div>
+          <p className="text-gray-500 text-xl mb-2">Cargando configuración...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-12">

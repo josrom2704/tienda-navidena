@@ -25,6 +25,11 @@ export const useApi = () => {
 
   // ✅ Categorías por dominio - USANDO API REAL DEL BACKEND
   const getCategoriasByDominio = useCallback(async (dominio: string) => {
+    if (!dominio) {
+      console.error("❌ [GET categorías] Dominio vacío, usando fallback");
+      dominio = 'tiendanavidena.vercel.app';
+    }
+    
     const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.CATEGORIAS)}?dominio=${encodeURIComponent(dominio)}`;
     console.log("[GET categorías] URL:", url);
     console.log("[GET categorías] Dominio:", dominio);
@@ -40,6 +45,11 @@ export const useApi = () => {
 
   // ✅ Productos por dominio + categoría - CORREGIDO PARA USAR PARÁMETROS CORRECTOS DEL BACKEND
   const getProductosByCategoria = useCallback(async (dominio: string, categoria: string) => {
+    if (!dominio) {
+      console.error("❌ [GET productos por categoría] Dominio vacío, usando fallback");
+      dominio = 'tiendanavidena.vercel.app';
+    }
+    
     // ✅ CAMBIO: Según el backend, debe usar 'url' para el dominio y 'categoria' para la categoría
     const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.PRODUCTOS)}?url=${encodeURIComponent(dominio)}&categoria=${encodeURIComponent(categoria)}`;
     console.log("[GET productos por categoría] URL:", url);
@@ -60,6 +70,11 @@ export const useApi = () => {
 
   // ✅ Productos por dominio (catálogo completo) - CORREGIDO PARA USAR PARÁMETROS CORRECTOS DEL BACKEND
   const getProductosAll = useCallback(async (dominio: string) => {
+    if (!dominio) {
+      console.error("❌ [GET todos los productos] Dominio vacío, usando fallback");
+      dominio = 'tiendanavidena.vercel.app';
+    }
+    
     // ✅ CAMBIO: Según el backend, debe usar 'url' para el dominio
     const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.PRODUCTOS)}?url=${encodeURIComponent(dominio)}`;
     console.log("[GET todos los productos] URL:", url);
