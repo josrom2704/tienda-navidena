@@ -13,6 +13,7 @@ export default function Home() {
       <HeroBanner />
       <FeaturesSection />
       <DailySelection />
+      <CategoriesGrid />
       <CustomQuoteSection />
       <DebugPanel />
       
