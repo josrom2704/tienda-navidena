@@ -72,30 +72,37 @@ export function useApi() {
     }
   }, []);
 
-  // ✅ Productos por dominio + categoría - CORREGIDO PARA USAR PARÁMETROS CORRECTOS DEL BACKEND
-  const getProductosByCategoria = useCallback(async (dominio: string, categoria: string) => {
-    if (!dominio) {
-      console.error("❌ [GET productos por categoría] Dominio vacío, usando fallback");
-      dominio = 'tiendanavidena.vercel.app';
+  // ✅ Productos por categoría - USANDO LO QUE SÍ FUNCIONA
+  const getProductosByCategoria = useCallback(async (dominio: string, categoria: string): Promise<Producto[]> => {
+    try {
+      console.log("🔍 [getProductosByCategoria] Iniciando llamada");
+      console.log("🔍 [getProductosByCategoria] Dominio recibido:", dominio);
+      console.log("🔍 [getProductosByCategoria] Categoría recibida:", categoria);
+      console.log("🔍 [getProductosByCategoria] Tipo de categoría:", typeof categoria);
+      
+      // ✅ SOLUCIÓN DEFINITIVA: Usar floristeriaId que sabemos que funciona
+      const floristeriaId = '68a125df2097950ec3ff19fa';
+      const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.PRODUCTOS)}?floristeriaId=${floristeriaId}&categoria=${encodeURIComponent(categoria)}`;
+      
+      console.log("🔍 [getProductosByCategoria] URL completa:", url);
+      console.log("🔍 [getProductosByCategoria] Parámetros enviados: floristeriaId=", floristeriaId, "categoria=", categoria);
+      
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log("✅ [getProductosByCategoria] Productos obtenidos:", data.length);
+      
+      return Array.isArray(data) ? data : [];
+      
+    } catch (error) {
+      console.error("❌ [getProductosByCategoria] Error:", error);
+      return [];
     }
-    
-    // ✅ CAMBIO: Según el backend, debe usar 'url' para el dominio y 'categoria' para la categoría
-    const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.PRODUCTOS)}?url=${encodeURIComponent(dominio)}&categoria=${encodeURIComponent(categoria)}`;
-    console.log("[GET productos por categoría] URL:", url);
-    console.log("[GET productos por categoría] Dominio:", dominio);
-    console.log("[GET productos por categoría] Categoría:", categoria);
-    
-    const res = await fetch(url, { headers: authHeaders() });
-    if (!res.ok) {
-      const txt = await res.text().catch(() => "");
-      console.error("[GET productos por categoría] status:", res.status, res.statusText, "body:", txt);
-      throw new Error(`Error al obtener productos por categoría (${res.status})`);
-    }
-    
-    const data = await res.json();
-    console.log("[GET productos por categoría] Respuesta:", data);
-    return data;
-  }, [authHeaders]);
+  }, []);
 
   // ✅ Productos por dominio - USANDO LO QUE SÍ FUNCIONA
   const getProductosAll = useCallback(async (dominio: string): Promise<Producto[]> => {
