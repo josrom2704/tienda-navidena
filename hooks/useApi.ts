@@ -46,10 +46,13 @@ export function useApi() {
 
     try {
       console.log("🔍 [getCategoriasByDominio] Iniciando llamada para dominio:", dominio);
+      console.log("🔍 [getCategoriasByDominio] Dominio original recibido:", dominio);
+      console.log("🔍 [getCategoriasByDominio] Tipo de dominio:", typeof dominio);
       
       // ✅ CAMBIO: Usar 'url' en lugar de 'dominio' para que funcione con el backend
       const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.CATEGORIAS)}?url=${encodeURIComponent(dominio)}`;
       console.log("🔍 [getCategoriasByDominio] URL completa:", url);
+      console.log("🔍 [getCategoriasByDominio] Parámetro url enviado:", dominio);
       
       const response = await fetch(url);
       
