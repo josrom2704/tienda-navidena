@@ -20,32 +20,41 @@ export default function Home() {
       <div className="fixed bottom-4 left-4 z-50">
         <button
           onClick={async () => {
-            console.log("🧪 TEST DIRECTO - API CATEGORÍAS");
+            console.log("�� TEST DIRECTO - API COMPLETA");
             
             try {
-              // Test 1: Sin parámetros
-              console.log("🧪 Test 1: Sin parámetros");
+              // Test 1: Categorías sin parámetros
+              console.log("🧪 Test 1: Categorías sin parámetros");
               const res1 = await fetch("https://flores-backend-px2c.onrender.com/api/categorias");
               const data1 = await res1.json();
               console.log("✅ Respuesta sin parámetros:", data1);
               
-              // Test 2: Con dominio
-              console.log("🧪 Test 2: Con dominio tiendanavidena.vercel.app");
-              const res2 = await fetch("https://flores-backend-px2c.onrender.com/api/categorias?dominio=tiendanavidena.vercel.app");
+              // Test 2: Categorías con URL
+              console.log("🧪 Test 2: Categorías con URL tiendanavidena.vercel.app");
+              const res2 = await fetch("https://flores-backend-px2c.onrender.com/api/categorias?url=tiendanavidena.vercel.app");
               const data2 = await res2.json();
-              console.log("✅ Respuesta con dominio:", data2);
+              console.log("✅ Respuesta con URL:", data2);
               
-              // Test 3: Con URL
-              console.log("🧪 Test 3: Con URL tiendanavidena.vercel.app");
-              const res3 = await fetch("https://flores-backend-px2c.onrender.com/api/categorias?url=tiendanavidena.vercel.app");
+              // Test 3: Productos sin parámetros
+              console.log("🧪 Test 3: Productos sin parámetros");
+              const res3 = await fetch("https://flores-backend-px2c.onrender.com/api/flores");
               const data3 = await res3.json();
-              console.log("✅ Respuesta con URL:", data3);
+              console.log("✅ Productos sin parámetros:", data3);
+              console.log("📊 Cantidad de productos:", Array.isArray(data3) ? data3.length : 'No es array');
               
-              // Test 4: Todas las floristerías
-              console.log("🧪 Test 4: Todas las floristerías");
-              const res4 = await fetch("https://flores-backend-px2c.onrender.com/api/floristerias");
+              // Test 4: Productos con URL
+              console.log("🧪 Test 4: Productos con URL tiendanavidena.vercel.app");
+              const res4 = await fetch("https://flores-backend-px2c.onrender.com/api/flores?url=tiendanavidena.vercel.app");
               const data4 = await res4.json();
-              console.log("✅ Todas las floristerías:", data4);
+              console.log("✅ Productos con URL:", data4);
+              console.log("📊 Cantidad de productos:", Array.isArray(data4) ? data4.length : 'No es array');
+              
+              // Test 5: Productos por categoría específica
+              console.log("🧪 Test 5: Productos por categoría 'Canastas con vino'");
+              const res5 = await fetch("https://flores-backend-px2c.onrender.com/api/flores?url=tiendanavidena.vercel.app&categoria=Canastas con vino");
+              const data5 = await res5.json();
+              console.log("✅ Productos por categoría:", data5);
+              console.log("📊 Cantidad de productos:", Array.isArray(data5) ? data5.length : 'No es array');
               
             } catch (error) {
               console.error("❌ Error en test directo:", error);
@@ -53,7 +62,7 @@ export default function Home() {
           }}
           className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors"
         >
-          🧪 Test Categorías
+          🧪 Test Completo
         </button>
       </div>
     </main>
