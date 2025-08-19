@@ -67,19 +67,49 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
   };
 
   const isFormValid = () => {
-    return (
-      formData.firstName.trim() !== "" &&
-      formData.lastName.trim() !== "" &&
-      formData.email.trim() !== "" &&
-      formData.phone.trim() !== "" &&
-      formData.address.trim() !== "" &&
-      formData.city.trim() !== "" &&
-      formData.postalCode.trim() !== ""
-    );
+    if (currentStep === 1) {
+      // Solo validar campos del paso 1 (información personal)
+      return (
+        formData.firstName.trim() !== "" &&
+        formData.lastName.trim() !== "" &&
+        formData.email.trim() !== "" &&
+        formData.phone.trim() !== ""
+      );
+    } else if (currentStep === 2) {
+      // Validar campos del paso 2 (dirección)
+      return (
+        formData.address.trim() !== "" &&
+        formData.city.trim() !== "" &&
+        formData.postalCode.trim() !== ""
+      );
+    }
+    return true; // Paso 3 no requiere validación
   };
 
   const nextStep = () => {
-    if (currentStep < 2) setCurrentStep(currentStep + 1);
+    console.log('🔄 Intentando avanzar al siguiente paso...');
+    console.log('📝 Paso actual:', currentStep);
+    console.log('✅ Formulario válido:', isFormValid());
+    console.log('📋 Datos del formulario:', formData);
+    
+    if (currentStep === 1 && isFormValid()) {
+      console.log('✅ Avanzando del paso 1 al 2');
+      setCurrentStep(2);
+    } else if (currentStep === 2 && isFormValid()) {
+      console.log('✅ Avanzando del paso 2 al 3');
+      setCurrentStep(3);
+    } else {
+      console.log('❌ No se puede avanzar - formulario inválido');
+      console.log('🔍 Campos faltantes:', {
+        firstName: formData.firstName.trim() === "",
+        lastName: formData.lastName.trim() === "",
+        email: formData.email.trim() === "",
+        phone: formData.phone.trim() === "",
+        address: formData.address.trim() === "",
+        city: formData.city.trim() === "",
+        postalCode: formData.postalCode.trim() === ""
+      });
+    }
   };
 
   const prevStep = () => {
@@ -161,8 +191,18 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
           disabled={!isFormValid()}
           className="luxury-button"
         >
-          Continuar
+          {isFormValid() ? 'Continuar' : 'Completa los campos requeridos'}
         </Button>
+        
+        {/* Indicador de campos faltantes */}
+        {!isFormValid() && currentStep === 1 && (
+          <div className="text-red-400 text-sm mt-2 text-center">
+            {formData.firstName.trim() === "" && "• Nombre requerido "}
+            {formData.lastName.trim() === "" && "• Apellido requerido "}
+            {formData.email.trim() === "" && "• Email requerido "}
+            {formData.phone.trim() === "" && "• Teléfono requerido"}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -250,9 +290,18 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
           onClick={nextStep}
           className="luxury-button"
         >
-          Continuar al Pago
+          {isFormValid() ? 'Continuar al Pago' : 'Completa los campos requeridos'}
         </Button>
       </div>
+      
+      {/* Indicador de campos faltantes */}
+      {!isFormValid() && currentStep === 2 && (
+        <div className="text-red-400 text-sm mt-2 text-center">
+          {formData.address.trim() === "" && "• Dirección requerida "}
+          {formData.city.trim() === "" && "• Ciudad requerida "}
+          {formData.postalCode.trim() === "" && "• Código postal requerido"}
+        </div>
+      )}
     </div>
   );
 
