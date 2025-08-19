@@ -12,19 +12,19 @@ export function useDominio() {
     let dominioFinal = hostname;
     
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      // En desarrollo local, usar un dominio de prueba
-      dominioFinal = 'tiendanavidena.vercel.app';
+      // En desarrollo local, usar el dominio real de Vercel
+      dominioFinal = 'tienda-navidenau.vercel.app';
     } else if (hostname.includes('vercel.app')) {
       // En Vercel, usar el dominio completo
       dominioFinal = hostname;
-    } else if (hostname.includes('tiendanavidena')) {
+    } else if (hostname.includes('tienda-navidenau')) {
       // Dominio personalizado
       dominioFinal = hostname;
     }
     
-    // ✅ CORRECCIÓN: Asegurar que se use el dominio completo
+    // ✅ CORRECCIÓN: Asegurar que se use el dominio correcto
     if (dominioFinal === 'vercel.app') {
-      dominioFinal = 'tiendanavidena.vercel.app';
+      dominioFinal = 'tienda-navidenau.vercel.app';
     }
     
     console.log("🌐 Dominio detectado:", { hostname, dominioFinal });
