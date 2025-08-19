@@ -213,8 +213,8 @@ export class WompiService {
       
       console.log('🔗 Creando enlace de pago a través de nuestra API...');
       
-      // Usar nuestra nueva API route más simple
-      const response = await fetch('/api/wompi-payment', {
+      // Usar nuestra nueva API route en la raíz
+      const response = await fetch('/api/payment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
