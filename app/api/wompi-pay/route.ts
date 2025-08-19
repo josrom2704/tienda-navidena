@@ -1,5 +1,14 @@
 import { NextResponse } from 'next/server';
 
+// Método GET para probar que la ruta funciona
+export async function GET() {
+  return NextResponse.json({
+    success: true,
+    message: 'Ruta /api/wompi-pay funcionando correctamente',
+    timestamp: new Date().toISOString()
+  });
+}
+
 export async function POST(request: Request) {
   try {
     console.log('🔗 Creando enlace de pago en Wompi...');
