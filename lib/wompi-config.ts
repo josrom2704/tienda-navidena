@@ -1,23 +1,16 @@
-// Configuración de Wompi para procesamiento de pagos
+// Configuración de Wompi
 export const WOMPI_CONFIG = {
-  // Credenciales OAuth 2.0
-  oauth: {
-    tokenUrl: 'https://id.wompi.sv/connect/token',
-    audience: 'wompi_api',
-    grantType: 'client_credentials'
-  },
-  
   // Credenciales del aplicativo
   credentials: {
-    clientId: process.env.NEXT_PUBLIC_WOMPI_CLIENT_ID || '670b06ca-2e3b-4818-a07a-18c22055e3a1',
-    clientSecret: process.env.WOMPI_CLIENT_SECRET || '9eac51bc-f0ca-4f26-823b-9656e3b618d5'
+    clientId: process.env.NEXT_PUBLIC_WOMPI_CLIENT_ID || 'c9ba55f7-c614-4a74-8e54-0c5e00d376d0',
+    clientSecret: process.env.NEXT_PUBLIC_WOMPI_CLIENT_SECRET || 'bc6c4920-1da5-4ea5-b7db-12e9de63237c'
   },
   
   // URLs de la API
   apiUrls: {
     base: 'https://api.wompi.sv',
-    paymentLinks: '/EnlacePago',
-    transactions: '/Transaccion'
+    paymentLinks: '/payment_links',
+    transactions: '/transactions'
   },
   
   // Configuración de moneda
@@ -35,45 +28,25 @@ export const WOMPI_CONFIG = {
     mockResponse: {
       success: true,
       transaction_id: 'sim_123456789',
-      payment_url: 'https://simulation.wompi.sv/pay',
-      status: 'APPROVED'
+      payment_url: 'https://example.com/simulated-payment'
     }
   }
 };
 
-// Función para obtener la configuración actual
-export function getWompiConfig() {
-  return {
-    ...WOMPI_CONFIG.oauth,
-    ...WOMPI_CONFIG.credentials,
-    apiUrl: WOMPI_CONFIG.apiUrls.base
-  };
-}
+// Obtener credenciales de Wompi
+export const getWompiCredentials = () => ({
+  clientId: WOMPI_CONFIG.credentials.clientId,
+  clientSecret: WOMPI_CONFIG.credentials.clientSecret
+});
 
-// Función para obtener las credenciales OAuth
-export function getWompiCredentials() {
-  return {
-    clientId: WOMPI_CONFIG.credentials.clientId,
-    clientSecret: WOMPI_CONFIG.credentials.clientSecret
-  };
-}
+// Obtener URL de autenticación
+export const getWompiAuthUrl = () => 'https://id.wompi.sv/connect/token';
 
-// Función para obtener la URL de la API
-export function getWompiApiUrl() {
-  return WOMPI_CONFIG.apiUrls.base;
-}
+// Obtener URL de la API
+export const getWompiApiUrl = () => WOMPI_CONFIG.apiUrls.base;
 
-// Función para obtener la URL de autenticación
-export function getWompiAuthUrl() {
-  return WOMPI_CONFIG.oauth.tokenUrl;
-}
+// Verificar si estamos en modo simulación
+export const isSimulationMode = () => WOMPI_CONFIG.simulation.enabled;
 
-// Función para verificar si estamos en modo simulación
-export function isSimulationMode() {
-  return WOMPI_CONFIG.simulation.enabled;
-}
-
-// Función para obtener respuesta de simulación
-export function getSimulationResponse() {
-  return WOMPI_CONFIG.simulation.mockResponse;
-}
+// Obtener respuesta de simulación
+export const getSimulationResponse = () => WOMPI_CONFIG.simulation.mockResponse;

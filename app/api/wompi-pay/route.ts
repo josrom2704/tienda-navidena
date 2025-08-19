@@ -15,8 +15,8 @@ export async function POST(request: Request) {
       },
       body: new URLSearchParams({
         grant_type: 'client_credentials',
-        client_id: '670b06ca-2e3b-4818-a07a-18c22055e3a1',
-        client_secret: '9eac51bc-f0ca-4f26-823b-9656e3b618d5',
+        client_id: 'c9ba55f7-c614-4a74-8e54-0c5e00d376d0',
+        client_secret: 'bc6c4920-1da5-4ea5-b7db-12e9de63237c',
         audience: 'wompi_api'
       })
     });
