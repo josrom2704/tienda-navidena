@@ -211,12 +211,12 @@ export class WompiService {
         };
       }
       
-      const apiUrl = '/api/create-payment';
+      const apiUrl = '/api/wompi-pay';
       console.log('🔗 Creando enlace de pago a través de nuestra API...');
       console.log('📍 URL de la API:', apiUrl);
       console.log('📋 Datos del pago:', paymentData);
       
-      // Usar nuestra nueva API route alternativa
+      // Usar nuestra nueva API route única
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {

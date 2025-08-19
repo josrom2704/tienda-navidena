@@ -1,12 +1,11 @@
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+import { NextResponse } from 'next/server';
 
+export async function POST(request: Request) {
   try {
     console.log('🔗 Creando enlace de pago en Wompi...');
     
-    const { amount_in_cents, currency, reference, customer_email, expires_at } = req.body;
+    const body = await request.json();
+    const { amount_in_cents, currency, reference, customer_email, expires_at } = body;
 
     // Primero obtener el token de acceso
     const authResponse = await fetch('https://id.wompi.sv/connect/token', {
@@ -25,10 +24,10 @@ export default async function handler(req, res) {
     if (!authResponse.ok) {
       const errorText = await authResponse.text();
       console.error('❌ Error de autenticación:', authResponse.status, errorText);
-      return res.status(authResponse.status).json({
-        error: `Error de autenticación: ${authResponse.status}`,
-        details: errorText
-      });
+      return NextResponse.json(
+        { error: `Error de autenticación: ${authResponse.status}` },
+        { status: authResponse.status }
+      );
     }
 
     const authData = await authResponse.json();
@@ -56,16 +55,16 @@ export default async function handler(req, res) {
     if (!paymentResponse.ok) {
       const errorText = await paymentResponse.text();
       console.error('❌ Error creando enlace:', paymentResponse.status, errorText);
-      return res.status(paymentResponse.status).json({
-        error: `Error creando enlace: ${paymentResponse.status}`,
-        details: errorText
-      });
+      return NextResponse.json(
+        { error: `Error creando enlace: ${paymentResponse.status}` },
+        { status: paymentResponse.status }
+      );
     }
 
     const linkData = await paymentResponse.json();
     console.log('✅ Enlace de pago creado exitosamente:', linkData);
 
-    return res.status(200).json({
+    return NextResponse.json({
       success: true,
       payment_url: linkData.permalink || linkData.payment_url,
       transaction_id: linkData.id
@@ -73,8 +72,9 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('❌ Error en creación de enlace:', error);
-    return res.status(500).json({
-      error: error instanceof Error ? error.message : 'Error desconocido'
-    });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Error desconocido' },
+      { status: 500 }
+    );
   }
 }
