@@ -40,15 +40,9 @@ export function useApi() {
   // ✅ Categorías por dominio - USANDO LO QUE SÍ FUNCIONA
   const getCategoriasByDominio = useCallback(async (dominio: string): Promise<string[]> => {
     try {
-      console.log("🔍 [getCategoriasByDominio] Iniciando llamada");
-      console.log("🔍 [getCategoriasByDominio] Dominio recibido:", dominio);
-      
       // ✅ SOLUCIÓN DEFINITIVA: Usar floristeriaId que sabemos que funciona
       const floristeriaId = '68a125df2097950ec3ff19fa';
       const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.CATEGORIAS)}?floristeriaId=${floristeriaId}`;
-      
-      console.log("🔍 [getCategoriasByDominio] URL completa:", url);
-      console.log("🔍 [getCategoriasByDominio] Parámetros enviados: floristeriaId=", floristeriaId);
       
       const response = await fetch(url);
       
@@ -57,9 +51,6 @@ export function useApi() {
       }
       
       const data = await response.json();
-      console.log("✅ [getCategoriasByDominio] Categorías obtenidas:", data.length);
-      console.log("✅ [getCategoriasByDominio] Respuesta completa:", data);
-      
       return Array.isArray(data) ? data : [];
       
     } catch (error) {
@@ -71,12 +62,6 @@ export function useApi() {
   // ✅ Productos por categoría - USANDO LO QUE SÍ FUNCIONA
   const getProductosByCategoria = useCallback(async (dominio: string, categoria: string): Promise<Producto[]> => {
     try {
-      console.log("🔍 [getProductosByCategoria] Iniciando llamada");
-      console.log("🔍 [getProductosByCategoria] Dominio recibido:", dominio);
-      console.log("🔍 [getProductosByCategoria] Categoría recibida:", categoria);
-      console.log("🔍 [getProductosByCategoria] Tipo de categoría:", typeof categoria);
-      console.log("🔍 [getProductosByCategoria] Categoría exacta:", JSON.stringify(categoria));
-      
       // ✅ CONVERTIR SLUG A CATEGORÍA REAL
       const slugToCategoria: { [key: string]: string } = {
         'canastas-con-vino': 'Canastas con vino',
@@ -93,18 +78,11 @@ export function useApi() {
       let categoriaReal = categoria;
       if (slugToCategoria[categoria]) {
         categoriaReal = slugToCategoria[categoria];
-        console.log("🔍 [getProductosByCategoria] Slug convertido:", categoria, "→ Categoría:", categoriaReal);
-      } else {
-        console.log("🔍 [getProductosByCategoria] Categoría no es slug, usando tal como viene:", categoria);
       }
       
       // ✅ SOLUCIÓN DEFINITIVA: Usar floristeriaId que sabemos que funciona
       const floristeriaId = '68a125df2097950ec3ff19fa';
       const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.PRODUCTOS)}?floristeriaId=${floristeriaId}&categoria=${encodeURIComponent(categoriaReal)}`;
-      
-      console.log("🔍 [getProductosByCategoria] URL completa:", url);
-      console.log("🔍 [getProductosByCategoria] Parámetros enviados: floristeriaId=", floristeriaId, "categoria=", categoriaReal);
-      console.log("🔍 [getProductosByCategoria] Categoría encoded:", encodeURIComponent(categoriaReal));
       
       const response = await fetch(url);
       
@@ -113,9 +91,6 @@ export function useApi() {
       }
       
       const data = await response.json();
-      console.log("✅ [getProductosByCategoria] Productos obtenidos:", data.length);
-      console.log("✅ [getProductosByCategoria] Respuesta completa:", data);
-      
       return Array.isArray(data) ? data : [];
       
     } catch (error) {
@@ -127,15 +102,9 @@ export function useApi() {
   // ✅ Todos los productos - USANDO LO QUE SÍ FUNCIONA
   const getProductosAll = useCallback(async (dominio: string): Promise<Producto[]> => {
     try {
-      console.log("🔍 [getProductosAll] Iniciando llamada");
-      console.log("🔍 [getProductosAll] Dominio recibido:", dominio);
-      
       // ✅ SOLUCIÓN DEFINITIVA: Usar floristeriaId que sabemos que funciona
       const floristeriaId = '68a125df2097950ec3ff19fa';
       const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.PRODUCTOS)}?floristeriaId=${floristeriaId}`;
-      
-      console.log("🔍 [getProductosAll] URL completa:", url);
-      console.log("🔍 [getProductosAll] Parámetros enviados: floristeriaId=", floristeriaId);
       
       const response = await fetch(url);
       
@@ -144,9 +113,6 @@ export function useApi() {
       }
       
       const data = await response.json();
-      console.log("✅ [getProductosAll] Productos obtenidos:", data.length);
-      console.log("✅ [getProductosAll] Respuesta completa:", data);
-      
       return Array.isArray(data) ? data : [];
       
     } catch (error) {

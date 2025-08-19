@@ -27,7 +27,6 @@ export function useDominio() {
       dominioFinal = 'tienda-navidenau.vercel.app';
     }
     
-    console.log("🌐 Dominio detectado:", { hostname, dominioFinal });
     setDominio(dominioFinal);
   }, []);
 
