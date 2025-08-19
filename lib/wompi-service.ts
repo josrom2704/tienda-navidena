@@ -211,25 +211,20 @@ export class WompiService {
         };
       }
       
-      console.log('🔗 Creando enlace de pago en Wompi...');
+      console.log('🔗 Creando enlace de pago a través de nuestra API...');
       
-      // Obtener token de acceso OAuth
-      const accessToken = await this.getAccessToken();
-      
-      const apiUrl = getWompiApiUrl();
-      const response = await fetch(`${apiUrl}/payment_links`, {
+      // Usar nuestra API route local para evitar CORS
+      const response = await fetch('/api/wompi/payment-links', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
         },
         body: JSON.stringify({
           amount_in_cents: paymentData.amount_in_cents,
           currency: paymentData.currency,
           reference: paymentData.reference,
           customer_email: paymentData.customer_email,
-          expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 horas
-          redirect_url: paymentData.redirect_url || `${window.location.origin}/checkout/success`
+          expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
         })
       });
 
@@ -244,8 +239,8 @@ export class WompiService {
 
       return {
         success: true,
-        payment_url: linkData.permalink || linkData.payment_url,
-        transaction_id: linkData.id
+        payment_url: linkData.payment_url,
+        transaction_id: linkData.transaction_id
       };
 
     } catch (error) {
