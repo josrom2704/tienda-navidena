@@ -213,8 +213,8 @@ export class WompiService {
       
       console.log('🔗 Creando enlace de pago a través de nuestra API...');
       
-      // Usar nuestra API route local para evitar CORS
-      const response = await fetch('/api/wompi/payment-links', {
+      // Usar nuestra nueva API route más simple
+      const response = await fetch('/api/wompi-payment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
