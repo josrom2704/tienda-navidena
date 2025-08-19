@@ -54,7 +54,7 @@ npm run build
 ### Variables de entorno
 ```bash
 # API
-NEXT_PUBLIC_API_URL=http://localhost:3000/api
+NEXT_PUBLIC_API_URL=https://flores-backend-px2c.onrender.com/api
 
 # Wompi (cuando tengas credenciales)
 WOMPI_CLIENT_ID=tu_client_id

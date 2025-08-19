@@ -26,7 +26,7 @@ WOMPI_CLIENT_SECRET=9eac51bc-f0ca-4f26-823b-9656e3b618d5
 NEXT_PUBLIC_WOMPI_ACCEPTANCE_TOKEN=acceptance_token_placeholder
 
 # Configuración de la API
-NEXT_PUBLIC_API_URL=http://localhost:3000/api
+NEXT_PUBLIC_API_URL=https://flores-backend-px2c.onrender.com/api
 ```
 
 ### 2. **Credenciales Configuradas**

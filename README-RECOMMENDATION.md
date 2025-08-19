@@ -227,8 +227,8 @@ fallbackProducts: [
 ### **Logs del Sistema**
 ```typescript
 // En la consola del navegador verás:
-[GET categorías] URL: http://localhost:3000/api/categorias?dominio=tiendanavidena
-[GET productos] URL: http://localhost:3000/api/flores?dominio=tiendanavidena&categoria=Flores
+[GET categorías] URL: https://flores-backend-px2c.onrender.com/api/categorias?dominio=tiendanavidena
+[GET productos] URL: https://flores-backend-px2c.onrender.com/api/flores?dominio=tiendanavidena&categoria=Flores
 ✅ Productos recomendados cargados: 4 productos
 🕐 Última actualización: 15/1/2024, 10:30:45
 ```
