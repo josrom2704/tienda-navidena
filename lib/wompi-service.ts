@@ -66,21 +66,12 @@ export class WompiService {
     try {
       console.log('🔐 Obteniendo token de acceso OAuth...');
       
-      const credentials = getWompiCredentials();
-      const authUrl = getWompiAuthUrl();
-      
-      const formData = new URLSearchParams();
-      formData.append('grant_type', 'client_credentials');
-      formData.append('client_id', credentials.clientId);
-      formData.append('client_secret', credentials.clientSecret);
-      formData.append('audience', 'wompi_api');
-
-      const response = await fetch(authUrl, {
+      // Usar nuestra API route local para evitar CORS
+      const response = await fetch('/api/wompi/auth', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: formData
+          'Content-Type': 'application/json',
+        }
       });
 
       if (!response.ok) {
@@ -90,8 +81,12 @@ export class WompiService {
       }
 
       const tokenData = await response.json();
-      this.accessToken = tokenData.access_token;
-      this.tokenExpiry = Date.now() + (tokenData.expires_in * 1000);
+      this.accessToken = tokenData.access_token || null;
+      this.tokenExpiry = Date.now() + ((tokenData.expires_in || 3600) * 1000);
+
+      if (!this.accessToken) {
+        throw new Error('No se pudo obtener el token de acceso');
+      }
 
       console.log('✅ Token de acceso obtenido exitosamente');
       return this.accessToken;
