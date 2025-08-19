@@ -77,13 +77,34 @@ export function useApi() {
       console.log("🔍 [getProductosByCategoria] Tipo de categoría:", typeof categoria);
       console.log("🔍 [getProductosByCategoria] Categoría exacta:", JSON.stringify(categoria));
       
+      // ✅ CONVERTIR SLUG A CATEGORÍA REAL
+      const slugToCategoria: { [key: string]: string } = {
+        'canastas-con-vino': 'Canastas con vino',
+        'canastas-con-whisky': 'Canastas con whisky',
+        'canastas-sin-licor': 'Canastas sin licor',
+        'regalos-navidenos': 'Regalos navideños',
+        'detalles-pequenos': 'Detalles pequeños',
+        'canastas-frutales': 'Canastas frutales',
+        'flores': 'Flores',
+        'ramos': 'Ramos'
+      };
+      
+      // ✅ Buscar en el mapeo primero
+      let categoriaReal = categoria;
+      if (slugToCategoria[categoria]) {
+        categoriaReal = slugToCategoria[categoria];
+        console.log("🔍 [getProductosByCategoria] Slug convertido:", categoria, "→ Categoría:", categoriaReal);
+      } else {
+        console.log("🔍 [getProductosByCategoria] Categoría no es slug, usando tal como viene:", categoria);
+      }
+      
       // ✅ SOLUCIÓN DEFINITIVA: Usar floristeriaId que sabemos que funciona
       const floristeriaId = '68a125df2097950ec3ff19fa';
-      const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.PRODUCTOS)}?floristeriaId=${floristeriaId}&categoria=${encodeURIComponent(categoria)}`;
+      const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.PRODUCTOS)}?floristeriaId=${floristeriaId}&categoria=${encodeURIComponent(categoriaReal)}`;
       
       console.log("🔍 [getProductosByCategoria] URL completa:", url);
-      console.log("🔍 [getProductosByCategoria] Parámetros enviados: floristeriaId=", floristeriaId, "categoria=", categoria);
-      console.log("🔍 [getProductosByCategoria] Categoría encoded:", encodeURIComponent(categoria));
+      console.log("🔍 [getProductosByCategoria] Parámetros enviados: floristeriaId=", floristeriaId, "categoria=", categoriaReal);
+      console.log("🔍 [getProductosByCategoria] Categoría encoded:", encodeURIComponent(categoriaReal));
       
       const response = await fetch(url);
       
