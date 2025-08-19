@@ -70,27 +70,12 @@ export function WompiButton({
           description: "Serás redirigido a Wompi para completar tu pago.",
         });
 
-        // Simular redirección (en producción esto abriría la URL)
-        console.log('🔗 URL de pago de Wompi:', paymentResponse.payment_url);
+        // Redirigir al usuario a la pasarela de pago de Wompi
+        console.log('🔗 Redirigiendo a Wompi:', paymentResponse.payment_url);
         
-        // Por ahora simulamos el proceso completo
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        // Redirección real a Wompi
+        window.location.href = paymentResponse.payment_url;
         
-        // Simular verificación del pago
-        if (paymentResponse.transaction_id) {
-          const verificationResponse = await wompiService.verifyTransactionStatus(paymentResponse.transaction_id);
-          
-          if (verificationResponse.success && verificationResponse.status === 'APPROVED') {
-            setPaymentStatus('success');
-            toast({
-              title: "¡Pago exitoso!",
-              description: `Tu pago ha sido procesado. ID: ${paymentResponse.transaction_id}`,
-            });
-            onPaymentSuccess(paymentResponse.transaction_id);
-          } else {
-            throw new Error('El pago no pudo ser verificado');
-          }
-        }
       } else {
         throw new Error('No se pudo generar el enlace de pago');
       }
@@ -186,6 +171,9 @@ export function WompiButton({
       <div className="text-center">
         <p className="text-gray-400 text-xs">
           🔒 Pagos procesados de forma segura por Wompi
+        </p>
+        <p className="text-gray-400 text-xs mt-1">
+          💳 Aceptamos todas las tarjetas principales
         </p>
       </div>
     </div>

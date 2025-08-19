@@ -84,7 +84,9 @@ export class WompiService {
       });
 
       if (!response.ok) {
-        throw new Error(`Error de autenticación: ${response.status}`);
+        const errorText = await response.text();
+        console.error('❌ Error de autenticación:', response.status, errorText);
+        throw new Error(`Error de autenticación: ${response.status} - ${errorText}`);
       }
 
       const tokenData = await response.json();
@@ -220,20 +222,25 @@ export class WompiService {
       const accessToken = await this.getAccessToken();
       
       const apiUrl = getWompiApiUrl();
-      const response = await fetch(`${apiUrl}/EnlacePago`, {
+      const response = await fetch(`${apiUrl}/payment_links`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${accessToken}`
         },
         body: JSON.stringify({
-          ...paymentData,
-          expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 horas
+          amount_in_cents: paymentData.amount_in_cents,
+          currency: paymentData.currency,
+          reference: paymentData.reference,
+          customer_email: paymentData.customer_email,
+          expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 horas
+          redirect_url: paymentData.redirect_url || `${window.location.origin}/checkout/success`
         })
       });
 
       if (!response.ok) {
         const errorText = await response.text();
+        console.error('❌ Error creando enlace:', response.status, errorText);
         throw new Error(`Error creando enlace: ${response.status} - ${errorText}`);
       }
 
@@ -242,7 +249,7 @@ export class WompiService {
 
       return {
         success: true,
-        payment_url: linkData.permalink,
+        payment_url: linkData.permalink || linkData.payment_url,
         transaction_id: linkData.id
       };
 

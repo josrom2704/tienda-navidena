@@ -9,8 +9,8 @@ export const WOMPI_CONFIG = {
   
   // Credenciales del aplicativo
   credentials: {
-    clientId: process.env.WOMPI_CLIENT_ID || 'tu_client_id_aqui',
-    clientSecret: process.env.WOMPI_CLIENT_SECRET || 'tu_client_secret_aqui'
+    clientId: process.env.NEXT_PUBLIC_WOMPI_CLIENT_ID || '670b06ca-2e3b-4818-a07a-18c22055e3a1',
+    clientSecret: process.env.WOMPI_CLIENT_SECRET || '9eac51bc-f0ca-4f26-823b-9656e3b618d5'
   },
   
   // URLs de la API
@@ -26,12 +26,12 @@ export const WOMPI_CONFIG = {
   // Configuración de aceptación
   acceptance: {
     type: 'END_USER',
-    acceptance_token: process.env.NEXT_PUBLIC_WOMPI_ACCEPTANCE_TOKEN || 'acceptance_token_...'
+    acceptance_token: process.env.NEXT_PUBLIC_WOMPI_ACCEPTANCE_TOKEN || 'acceptance_token_placeholder'
   },
   
   // Modo de simulación para desarrollo
   simulation: {
-    enabled: process.env.NODE_ENV === 'development' && !process.env.WOMPI_CLIENT_ID,
+    enabled: process.env.NODE_ENV === 'development' && !process.env.NEXT_PUBLIC_WOMPI_CLIENT_ID,
     mockResponse: {
       success: true,
       transaction_id: 'sim_123456789',
