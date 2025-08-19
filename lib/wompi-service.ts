@@ -1,5 +1,5 @@
 // Servicio de Wompi para procesamiento de pagos
-import { getWompiConfig, getWompiApiUrl, getWompiAuthUrl, getWompiCredentials, isSimulationMode, getSimulationResponse } from './wompi-config';
+import { getWompiCredentials, getWompiApiUrl, getWompiAuthUrl, isSimulationMode, getSimulationResponse } from './wompi-config';
 
 export interface WompiPaymentRequest {
   amount_in_cents: number;
@@ -41,12 +41,12 @@ export interface WompiTransaction {
 
 export class WompiService {
   private static instance: WompiService;
-  private config: any;
+  private credentials: any;
   private accessToken: string | null = null;
   private tokenExpiry: number = 0;
 
   private constructor() {
-    this.config = getWompiConfig();
+    this.credentials = getWompiCredentials();
   }
 
   public static getInstance(): WompiService {
@@ -154,7 +154,7 @@ export class WompiService {
         return {
           success: true,
           transaction_id: transactionId,
-          status: simResponse.status
+          status: 'APPROVED'
         };
       }
       
@@ -207,7 +207,8 @@ export class WompiService {
         return {
           success: true,
           payment_url: simResponse.payment_url,
-          transaction_id: simResponse.transaction_id
+          transaction_id: simResponse.transaction_id,
+          status: 'APPROVED'
         };
       }
       
@@ -245,7 +246,8 @@ export class WompiService {
       return {
         success: true,
         payment_url: linkData.payment_url,
-        transaction_id: linkData.transaction_id
+        transaction_id: linkData.transaction_id,
+        status: 'PENDING'
       };
 
     } catch (error) {

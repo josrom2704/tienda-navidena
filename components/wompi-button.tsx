@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import WompiService, { WompiPaymentRequest } from "@/lib/wompi-service";
-import { getWompiConfig } from "@/lib/wompi-config";
 import { CreditCard, Loader2, CheckCircle, XCircle } from "lucide-react";
 
 interface WompiButtonProps {
@@ -101,81 +100,47 @@ export function WompiButton({
       case 'processing':
         return (
           <>
-            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
             Procesando...
           </>
         );
       case 'success':
         return (
           <>
-            <CheckCircle className="w-5 h-5 mr-2 text-green-500" />
+            <CheckCircle className="w-4 h-4 mr-2" />
             ¡Pago Exitoso!
           </>
         );
       case 'error':
         return (
           <>
-            <XCircle className="w-5 h-5 mr-2 text-red-500" />
+            <XCircle className="w-4 h-4 mr-2" />
             Error en Pago
           </>
         );
       default:
         return (
           <>
-            <CreditCard className="w-5 h-5 mr-2" />
+            <CreditCard className="w-4 h-4 mr-2" />
             Pagar con Wompi
           </>
         );
     }
   };
 
-  const getButtonVariant = () => {
-    switch (paymentStatus) {
-      case 'success':
-        return 'default' as const;
-      case 'error':
-        return 'destructive' as const;
-      default:
-        return 'default' as const;
-    }
-  };
-
   return (
-    <div className="space-y-4">
-      <Button
-        onClick={handleWompiPayment}
-        disabled={isProcessing || paymentStatus === 'success'}
-        variant={getButtonVariant()}
-        className="w-full luxury-button py-4 text-lg font-medium tracking-wide"
-        size="lg"
-      >
-        {getButtonContent()}
-      </Button>
-      
-      {paymentStatus === 'success' && (
-        <div className="text-center p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
-          <p className="text-green-400 text-sm">
-            ✅ Pago procesado exitosamente. Redirigiendo...
-          </p>
-        </div>
-      )}
-      
-      {paymentStatus === 'error' && (
-        <div className="text-center p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-          <p className="text-red-400 text-sm">
-            ❌ Hubo un error en el pago. Intenta nuevamente.
-          </p>
-        </div>
-      )}
-      
-      <div className="text-center">
-        <p className="text-gray-400 text-xs">
-          🔒 Pagos procesados de forma segura por Wompi
-        </p>
-        <p className="text-gray-400 text-xs mt-1">
-          💳 Aceptamos todas las tarjetas principales
-        </p>
-      </div>
-    </div>
+    <Button
+      onClick={handleWompiPayment}
+      disabled={isProcessing || paymentStatus === 'processing'}
+      className={`w-full py-3 text-lg font-semibold transition-all duration-300 ${
+        paymentStatus === 'success'
+          ? 'bg-green-600 hover:bg-green-700 text-white'
+          : paymentStatus === 'error'
+          ? 'bg-red-600 hover:bg-red-700 text-white'
+          : 'luxury-button'
+      }`}
+    >
+      {getButtonContent()}
+    </Button>
   );
 }
