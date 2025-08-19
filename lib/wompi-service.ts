@@ -211,10 +211,10 @@ export class WompiService {
         };
       }
       
-      console.log('🔗 Creando enlace de pago a través de nuestra API...');
+      console.log('🔗 Creando enlace de pago a través del backend...');
       
-      // Usar nuestra nueva API route en la raíz
-      const response = await fetch('/api/payment', {
+      // Usar tu backend existente para evitar problemas de API routes
+      const response = await fetch('https://flores-backend-px2c.onrender.com/api/wompi/payment-links', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
