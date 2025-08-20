@@ -1,168 +1,173 @@
 // /components/categories-grid.tsx
 "use client";
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { useApi } from "@/hooks/useApi";
-import { useDominio } from "@/hooks/useDominio";
+import { useApi } from '@/hooks/useApi';
+import { useDominio } from '@/hooks/useDominio';
+import { useEffect, useState } from 'react';
+import { Wine, Gift, Apple, Flower, Sprout, Package, Sparkles, Heart } from 'lucide-react';
+
+interface CategoryCardProps {
+  categoria: string;
+  icon: React.ReactNode;
+  description: string;
+}
+
+const CategoryCard: React.FC<CategoryCardProps> = ({ categoria, icon, description }) => {
+  const slug = categoria
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[áéíóúüñ]/g, (match) => {
+      const accents: { [key: string]: string } = {
+        'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u', 'ü': 'u', 'ñ': 'n'
+      };
+      return accents[match] || match;
+    });
+
+  return (
+    <a
+      href={`/catalogo/${slug}`}
+      className="group block bg-gradient-to-b from-gray-100 to-black rounded-lg border border-white/20 overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-white/10"
+    >
+      <div className="relative p-6 text-center">
+        {/* Icono personalizado */}
+        <div className="flex justify-center mb-4">
+          <div className="p-3 bg-white/10 rounded-full group-hover:bg-white/20 transition-colors duration-300">
+            {icon}
+          </div>
+        </div>
+        
+        {/* Título */}
+        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-white/90 transition-colors duration-300">
+          {categoria}
+        </h3>
+        
+        {/* Descripción */}
+        <p className="text-sm text-white/80 group-hover:text-white/70 transition-colors duration-300">
+          {description}
+        </p>
+      </div>
+    </a>
+  );
+};
 
 export function CategoriesGrid() {
-  const { getCategoriasByDominio } = useApi();
-  const dominio = useDominio();
   const [categorias, setCategorias] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [debugInfo, setDebugInfo] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const dominio = useDominio();
+  const { getCategoriasByDominio } = useApi();
 
   useEffect(() => {
-    if (!dominio) {
-      console.log("⏳ Esperando dominio...");
-      return;
-    }
+    if (!dominio) return;
 
-    (async () => {
+    const fetchCategorias = async () => {
       try {
-        console.log("🔍 [CATEGORÍAS] Iniciando carga para dominio:", dominio);
-        console.log("🔍 [CATEGORÍAS] URL del backend:", `https://flores-backend-px2c.onrender.com/api/categorias?dominio=${dominio}`);
-        
+        setLoading(true);
         const data = await getCategoriasByDominio(dominio);
-        console.log("✅ [CATEGORÍAS] Respuesta del backend:", data);
-        console.log("📊 [CATEGORÍAS] Tipo de datos:", typeof data);
-        console.log("📊 [CATEGORÍAS] Longitud:", Array.isArray(data) ? data.length : 'No es array');
-        console.log("📊 [CATEGORÍAS] Contenido completo:", JSON.stringify(data, null, 2));
-        
-        setDebugInfo({
-          dominio,
-          categorias: data,
-          tipo: typeof data,
-          esArray: Array.isArray(data),
-          longitud: Array.isArray(data) ? data.length : 'N/A',
-          timestamp: new Date().toISOString()
-        });
-        
-        if (data && Array.isArray(data) && data.length > 0) {
-          // ✅ Usar SOLO las categorías del backend
-          console.log("✅ [CATEGORÍAS] Categorías cargadas exitosamente:", data);
-          setCategorias(data);
-        } else {
-          console.log("⚠️ [CATEGORÍAS] No se encontraron categorías en el backend");
-          console.log("⚠️ [CATEGORÍAS] Data recibida:", data);
-          setCategorias([]); // ✅ Array vacío, NO fallback hardcodeado
-        }
-      } catch (error) {
-        console.error("❌ [CATEGORÍAS] Error cargando categorías:", error);
-        console.error("❌ [CATEGORÍAS] Error completo:", error);
-        setCategorias([]); // ✅ Array vacío en caso de error, NO fallback hardcodeado
+        setCategorias(data);
+        setError(null);
+      } catch (err) {
+        setError('Error al cargar categorías');
+        console.error('Error fetching categorías:', err);
       } finally {
         setLoading(false);
       }
-    })();
-  }, [getCategoriasByDominio, dominio]);
+    };
 
-  if (loading || !dominio) {
+    fetchCategorias();
+  }, [dominio, getCategoriasByDominio]);
+
+  // ✅ Mapeo de iconos personalizados para cada categoría
+  const getCategoryIcon = (categoria: string) => {
+    const iconMap: { [key: string]: React.ReactNode } = {
+      'Canastas con vino': <Wine className="w-8 h-8 text-red-500" />,
+      'Canastas con whisky': <Wine className="w-8 h-8 text-amber-600" />,
+      'Canastas sin licor': <Package className="w-8 h-8 text-blue-500" />,
+      'Regalos navideños': <Gift className="w-8 h-8 text-green-500" />,
+      'Detalles pequeños': <Heart className="w-8 h-8 text-pink-500" />,
+      'Canastas frutales': <Apple className="w-8 h-8 text-red-600" />,
+      'Flores': <Flower className="w-8 h-8 text-purple-500" />,
+      'Ramos': <Sprout className="w-8 h-8 text-rose-500" />
+    };
+
+    return iconMap[categoria] || <Sparkles className="w-8 h-8 text-yellow-500" />;
+  };
+
+  // ✅ Descripciones personalizadas para cada categoría
+  const getCategoryDescription = (categoria: string) => {
+    const descriptionMap: { [key: string]: string } = {
+      'Canastas con vino': 'Descubre nuestra selección especial de canastas con vino',
+      'Canastas con whisky': 'Descubre nuestra selección especial de canastas con whisky',
+      'Canastas sin licor': 'Descubre nuestra selección especial de canastas sin licor',
+      'Regalos navideños': 'Descubre nuestra selección especial de regalos navideños',
+      'Detalles pequeños': 'Descubre nuestra selección especial de detalles pequeños',
+      'Canastas frutales': 'Descubre nuestra selección especial de canastas frutales',
+      'Flores': 'Descubre nuestra selección especial de flores',
+      'Ramos': 'Descubre nuestra selección especial de ramos'
+    };
+
+    return descriptionMap[categoria] || 'Descubre nuestra selección especial';
+  };
+
+  if (loading) {
     return (
-      <section className="py-20 bg-gradient-to-b from-black to-gray-900">
-        <div className="container mx-auto px-4 text-gray-300">
-          {!dominio ? "Cargando dominio..." : "Cargando categorías…"}
+      <section className="py-16 px-4">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-bold text-center text-white mb-12">
+            Nuestras Categorías
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="bg-gradient-to-b from-gray-100 to-black rounded-lg border border-white/20 p-6 animate-pulse">
+                <div className="bg-white/10 rounded-full w-16 h-16 mx-auto mb-4"></div>
+                <div className="bg-white/10 h-6 rounded mb-2"></div>
+                <div className="bg-white/10 h-4 rounded"></div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
     );
   }
 
-  // ✅ Si no hay categorías, mostrar mensaje apropiado
+  if (error) {
+    return (
+      <section className="py-16 px-4">
+        <div className="max-w-7xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-white mb-8">Nuestras Categorías</h2>
+          <p className="text-red-400 text-lg">{error}</p>
+        </div>
+      </section>
+    );
+  }
+
   if (categorias.length === 0) {
     return (
-      <section className="py-20 bg-gradient-to-b from-black to-gray-900">
-        <div className="container mx-auto px-4 text-center">
-          <div className="text-gray-400 text-6xl mb-4">📋</div>
-          <h2 className="text-2xl font-bold text-white mb-4">No hay categorías disponibles</h2>
-          <p className="text-gray-400 mb-4">
-            Las categorías aparecerán aquí una vez que se agreguen productos desde el panel de administración.
-          </p>
-          
-          {/* Debug Info - Solo en desarrollo */}
-          {process.env.NODE_ENV === 'development' && debugInfo && (
-            <div className="mt-8 p-4 bg-red-900/20 border border-red-500/30 rounded-lg text-red-200 text-sm max-w-4xl mx-auto">
-              <h3 className="font-bold mb-2">🔍 Debug Info - CATEGORÍAS VACÍAS:</h3>
-              <pre className="text-xs overflow-auto">
-                {JSON.stringify(debugInfo, null, 2)}
-              </pre>
-            </div>
-          )}
+      <section className="py-16 px-4">
+        <div className="max-w-7xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-white mb-8">Nuestras Categorías</h2>
+          <p className="text-gray-400 text-lg">No hay categorías disponibles en este momento.</p>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="py-20 bg-gradient-to-b from-black to-gray-900">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16 fade-in-up">
-          <h2 className="text-4xl lg:text-5xl font-playfair font-bold text-white mb-6">
-            Explora Nuestras <span className="text-gold-400">Colecciones Exclusivas</span>
-          </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
-            Cada categoría ha sido cuidadosamente curada para ofrecerte la más alta calidad y elegancia.
-          </p>
-        </div>
-
-        {/* Debug Info - Solo en desarrollo */}
-        {process.env.NODE_ENV === 'development' && debugInfo && (
-          <div className="mb-8 p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg text-blue-200 text-sm">
-            <h3 className="font-bold mb-2">🔍 Debug Info - CATEGORÍAS CARGADAS:</h3>
-            <pre className="text-xs overflow-auto">
-              {JSON.stringify(debugInfo, null, 2)}
-            </pre>
-          </div>
-        )}
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {categorias.map((categoria, index) => {
-            // ✅ Generar slug para la URL (normalizar espacios y caracteres especiales)
-            const urlSlug = categoria.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-            const href = `/catalogo/${urlSlug}`;
-            
-            // ✅ Icono dinámico basado en el nombre de la categoría
-            const getIcon = (cat: string) => {
-              const lowerCat = cat.toLowerCase();
-              if (lowerCat.includes('vino') || lowerCat.includes('whisky') || lowerCat.includes('licor')) return '🍷';
-              if (lowerCat.includes('flor') || lowerCat.includes('rama')) return '🌹';
-              if (lowerCat.includes('regalo') || lowerCat.includes('navideño')) return '🎁';
-              if (lowerCat.includes('fruta')) return '🍎';
-              if (lowerCat.includes('detalle')) return '✨';
-              return '⭐';
-            };
-            
-            return (
-              <Link key={href} href={href}>
-                <Card
-                  className="group bg-black border-2 border-gold-500/20 hover:border-gold-400 transition-all duration-500 overflow-hidden hover:luxury-glow cursor-pointer scale-in"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <div className="relative overflow-hidden">
-                    <img
-                      src={"/placeholder.svg?height=300&width=400"}
-                      alt={categoria}
-                      className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                    <div className="absolute top-4 right-4 w-12 h-12 bg-gold-400/90 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                      <span className="text-2xl">{getIcon(categoria)}</span>
-                    </div>
-                  </div>
-                  <CardContent className="p-6 bg-black">
-                    <h3 className="text-xl font-playfair font-semibold text-white mb-3 group-hover:text-gold-400 transition-colors duration-300">
-                      {categoria}
-                    </h3>
-                    <p className="text-gray-400 text-sm font-light leading-relaxed">
-                      Descubre nuestra selección especial de {categoria.toLowerCase()}
-                    </p>
-                    <div className="mt-4 h-px bg-gradient-to-r from-transparent via-gold-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </CardContent>
-                </Card>
-              </Link>
-            );
-          })}
+    <section className="py-16 px-4">
+      <div className="max-w-7xl mx-auto">
+        <h2 className="text-3xl font-bold text-center text-white mb-12">
+          Nuestras Categorías
+        </h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {categorias.map((categoria) => (
+            <CategoryCard
+              key={categoria}
+              categoria={categoria}
+              icon={getCategoryIcon(categoria)}
+              description={getCategoryDescription(categoria)}
+            />
+          ))}
         </div>
       </div>
     </section>
