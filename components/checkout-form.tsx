@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCart } from "./cart-provider";
 import { OrderSummary } from "./order-summary";
 import { WompiButton } from "./wompi-button";
@@ -34,6 +35,13 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSelectChange = (name: string, value: string) => {
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -254,13 +262,37 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
 
       <div>
         <Label htmlFor="country" className="text-white">País</Label>
-        <Input
-          id="country"
-          name="country"
+        <Select
           value={formData.country}
-          disabled
-          className="bg-gray-700 border-gray-600 text-gray-400"
-        />
+          onValueChange={(value) => handleSelectChange("country", value)}
+        >
+          <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+            <SelectValue placeholder="Selecciona tu país" />
+          </SelectTrigger>
+          <SelectContent className="bg-gray-800 border-gray-600 text-white">
+            <SelectItem value="El Salvador">El Salvador</SelectItem>
+            <SelectItem value="Guatemala">Guatemala</SelectItem>
+            <SelectItem value="Honduras">Honduras</SelectItem>
+            <SelectItem value="Nicaragua">Nicaragua</SelectItem>
+            <SelectItem value="Costa Rica">Costa Rica</SelectItem>
+            <SelectItem value="Panamá">Panamá</SelectItem>
+            <SelectItem value="México">México</SelectItem>
+            <SelectItem value="Estados Unidos">Estados Unidos</SelectItem>
+            <SelectItem value="Canadá">Canadá</SelectItem>
+            <SelectItem value="España">España</SelectItem>
+            <SelectItem value="Argentina">Argentina</SelectItem>
+            <SelectItem value="Chile">Chile</SelectItem>
+            <SelectItem value="Colombia">Colombia</SelectItem>
+            <SelectItem value="Perú">Perú</SelectItem>
+            <SelectItem value="Venezuela">Venezuela</SelectItem>
+            <SelectItem value="Ecuador">Ecuador</SelectItem>
+            <SelectItem value="Uruguay">Uruguay</SelectItem>
+            <SelectItem value="Paraguay">Paraguay</SelectItem>
+            <SelectItem value="Bolivia">Bolivia</SelectItem>
+            <SelectItem value="Brasil">Brasil</SelectItem>
+            <SelectItem value="Otro">Otro</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div>
@@ -281,7 +313,7 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
           type="button"
           variant="outline"
           onClick={prevStep}
-          className="border-2 border-gray-600 text-white hover:bg-gray-800 hover:text-white"
+          className="border-2 border-green-400 text-green-400 hover:bg-green-400 hover:text-black transition-colors duration-200"
         >
           Atrás
         </Button>
@@ -304,8 +336,6 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
       )}
     </div>
   );
-
-// ... existing code ...
 
 const renderStep3 = () => (
   <div className="space-y-6">
@@ -342,16 +372,13 @@ const renderStep3 = () => (
         type="button"
         variant="outline"
         onClick={prevStep}
-        className="border-2 border-gray-600 text-white hover:bg-gray-800 hover:text-white"
+        className="border-2 border-green-400 text-green-400 hover:bg-green-400 hover:text-black transition-colors duration-200"
       >
         Atrás
       </Button>
     </div>
   </div>
 );
-
-// ... existing code ...
-  
 
   return (
     <div className="min-h-screen bg-black py-20">
