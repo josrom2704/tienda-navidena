@@ -62,18 +62,18 @@ export function useApi() {
   // ✅ Productos por categoría - USANDO LO QUE SÍ FUNCIONA
   const getProductosByCategoria = useCallback(async (dominio: string, categoria: string): Promise<Producto[]> => {
     try {
-      // 🔍 LOG TEMPORAL PARA DEBUGGING
-      console.log("🔍 [DEBUG] getProductosByCategoria - Categoría recibida:", categoria);
-      console.log("🔍 [DEBUG] getProductosByCategoria - Tipo de categoría:", typeof categoria);
-      
       // ✅ CONVERTIR SLUG A CATEGORÍA REAL
       const slugToCategoria: { [key: string]: string } = {
         'canastas-con-vino': 'Canastas con vino',
+        'canastas-vino': 'Canastas con vino', // ✅ AGREGADO: Slug sin "con"
         'canastas-con-whisky': 'Canastas con whisky',
+        'canastas-whisky': 'Canastas con whisky', // ✅ AGREGADO: Slug sin "con"
         'canastas-sin-licor': 'Canastas sin licor',
+        'canastas-licor': 'Canastas sin licor', // ✅ AGREGADO: Slug alternativo
         'regalos-navidenos': 'Regalos navideños',
         'detalles-pequenos': 'Detalles pequeños',
         'canastas-frutales': 'Canastas frutales',
+        'canastas-frutal': 'Canastas frutales', // ✅ AGREGADO: Slug singular
         'flores': 'Flores',
         'ramos': 'Ramos'
       };
@@ -82,17 +82,11 @@ export function useApi() {
       let categoriaReal = categoria;
       if (slugToCategoria[categoria]) {
         categoriaReal = slugToCategoria[categoria];
-        console.log("🔍 [DEBUG] Slug convertido:", categoria, "→ Categoría:", categoriaReal);
-      } else {
-        console.log("🔍 [DEBUG] Categoría no es slug, usando tal como viene:", categoria);
       }
       
       // ✅ SOLUCIÓN DEFINITIVA: Usar floristeriaId que sabemos que funciona
       const floristeriaId = '68a125df2097950ec3ff19fa';
       const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.PRODUCTOS)}?floristeriaId=${floristeriaId}&categoria=${encodeURIComponent(categoriaReal)}`;
-      
-      console.log("🔍 [DEBUG] URL final:", url);
-      console.log("🔍 [DEBUG] Categoría encoded:", encodeURIComponent(categoriaReal));
       
       const response = await fetch(url);
       
@@ -101,9 +95,6 @@ export function useApi() {
       }
       
       const data = await response.json();
-      console.log("🔍 [DEBUG] Productos obtenidos:", data);
-      console.log("🔍 [DEBUG] Cantidad de productos:", Array.isArray(data) ? data.length : 'No es array');
-      
       return Array.isArray(data) ? data : [];
       
     } catch (error) {
