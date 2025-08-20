@@ -212,7 +212,7 @@ export class WompiService {
         };
       }
       
-      const apiUrl = '/api/wompi-payment';
+      const apiUrl = 'https://flores-backend-px2c.onrender.com/api/wompi/create-payment';
       console.log('🔗 Creando enlace de pago a través de nuestra API...');
       console.log('📍 URL de la API:', apiUrl);
       console.log('📋 Datos del pago:', paymentData);
