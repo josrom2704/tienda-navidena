@@ -305,48 +305,53 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
     </div>
   );
 
-  const renderStep3 = () => (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h3 className="text-xl font-semibold text-white mb-4">
-          Resumen del Pedido
-        </h3>
-        <div className="bg-gray-800 p-4 rounded-lg">
-          <p className="text-gray-300 mb-2">
-            <span className="font-medium">Cliente:</span> {formData.firstName} {formData.lastName}
-          </p>
-          <p className="text-gray-300 mb-2">
-            <span className="font-medium">Email:</span> {formData.email}
-          </p>
-          <p className="text-gray-300 mb-2">
-            <span className="font-medium">Total:</span> ${total.toLocaleString()}
-          </p>
-        </div>
-      </div>
+// ... existing code ...
 
-      <div className="text-center">
-        <WompiButton
-          amount={total}
-          orderNumber={`ORD-${Date.now()}`}
-          customerEmail={formData.email}
-          customerName={`${formData.firstName} ${formData.lastName}`}
-          onPaymentSuccess={handlePaymentSuccess}
-          onPaymentError={handlePaymentError}
-        />
-      </div>
-
-      <div className="flex justify-center">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={prevStep}
-          className="border-2 border-gray-600 text-white hover:bg-gray-800 hover:text-white"
-        >
-          Atrás
-        </Button>
+const renderStep3 = () => (
+  <div className="space-y-6">
+    <div className="text-center">
+      <h3 className="text-xl font-semibold text-white mb-4">
+        Resumen del Pedido
+      </h3>
+      <div className="bg-gray-800 p-4 rounded-lg">
+        <p className="text-gray-300 mb-2">
+          <span className="font-medium">Cliente:</span> {formData.firstName} {formData.lastName}
+        </p>
+        <p className="text-gray-300 mb-2">
+          <span className="font-medium">Email:</span> {formData.email}
+        </p>
+        <p className="text-gray-300 mb-2">
+          <span className="font-medium">Total:</span> ${(total + (total >= 250 ? 0 : 3)).toLocaleString()}
+        </p>
       </div>
     </div>
-  );
+
+    <div className="text-center">
+      <WompiButton
+        amount={total + (total >= 250 ? 0 : 3)} // ← CORREGIDO: Incluir envío
+        orderNumber={`ORD-${Date.now()}`}
+        customerEmail={formData.email}
+        customerName={`${formData.firstName} ${formData.lastName}`}
+        onPaymentSuccess={handlePaymentSuccess}
+        onPaymentError={handlePaymentError}
+      />
+    </div>
+
+    <div className="flex justify-center">
+      <Button
+        type="button"
+        variant="outline"
+        onClick={prevStep}
+        className="border-2 border-gray-600 text-white hover:bg-gray-800 hover:text-white"
+      >
+        Atrás
+      </Button>
+    </div>
+  </div>
+);
+
+// ... existing code ...
+  
 
   return (
     <div className="min-h-screen bg-black py-20">
