@@ -1,5 +1,5 @@
 // Servicio de Wompi para procesamiento de pagos
-import { getWompiCredentials, getWompiApiUrl, getWompiAuthUrl, isSimulationMode, getSimulationResponse } from './wompi-config';
+import { isSimulationMode, getSimulationResponse } from './wompi-config';
 
 export interface WompiPaymentRequest {
   amount_in_cents: number;
@@ -24,30 +24,10 @@ export interface WompiPaymentResponse {
   status?: string;
 }
 
-export interface WompiTransaction {
-  id: string;
-  status: string;
-  amount_in_cents: number;
-  currency: string;
-  reference: string;
-  customer_email: string;
-  payment_method: {
-    type: string;
-    installments?: number;
-  };
-  created_at: string;
-  updated_at: string;
-}
-
 export class WompiService {
   private static instance: WompiService;
-  private credentials: any;
-  private accessToken: string | null = null;
-  private tokenExpiry: number = 0;
 
-  private constructor() {
-    this.credentials = getWompiCredentials();
-  }
+  private constructor() {}
 
   public static getInstance(): WompiService {
     if (!WompiService.instance) {
@@ -56,150 +36,13 @@ export class WompiService {
     return WompiService.instance;
   }
 
-  // Obtener token de acceso OAuth 2.0
-  private async getAccessToken(): Promise<string> {
-    // Verificar si el token actual es válido
-    if (this.accessToken && Date.now() < this.tokenExpiry) {
-      return this.accessToken;
-    }
-
-    try {
-      console.log('🔐 Obteniendo token de acceso OAuth...');
-      
-      // Usar nuestra API route local para evitar CORS
-      const response = await fetch('/api/wompi/auth', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ Error de autenticación:', response.status, errorText);
-        throw new Error(`Error de autenticación: ${response.status} - ${errorText}`);
-      }
-
-      const tokenData = await response.json();
-      this.accessToken = tokenData.access_token || null;
-      this.tokenExpiry = Date.now() + ((tokenData.expires_in || 3600) * 1000);
-
-      if (!this.accessToken) {
-        throw new Error('No se pudo obtener el token de acceso');
-      }
-
-      console.log('✅ Token de acceso obtenido exitosamente');
-      return this.accessToken;
-
-    } catch (error) {
-      console.error('❌ Error obteniendo token de acceso:', error);
-      throw error;
-    }
-  }
-
-  // Crear una transacción de pago
-  public async createPaymentTransaction(paymentData: WompiPaymentRequest): Promise<WompiPaymentResponse> {
-    try {
-      console.log('💰 Creando transacción de pago en Wompi...');
-      
-      // Obtener token de acceso OAuth
-      const accessToken = await this.getAccessToken();
-      
-      const apiUrl = getWompiApiUrl();
-      const response = await fetch(`${apiUrl}/transactions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify(paymentData)
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ Error en Wompi:', response.status, errorText);
-        throw new Error(`Error en Wompi: ${response.status} - ${errorText}`);
-      }
-
-      const transactionData = await response.json();
-      console.log('✅ Transacción creada exitosamente:', transactionData);
-
-      return {
-        success: true,
-        transaction_id: transactionData.id,
-        payment_url: transactionData.payment_url,
-        status: transactionData.status
-      };
-
-    } catch (error) {
-      console.error('❌ Error creando transacción:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      };
-    }
-  }
-
-  // Verificar el estado de una transacción
-  public async verifyTransactionStatus(transactionId: string): Promise<WompiPaymentResponse> {
-    try {
-      // Verificar si estamos en modo simulación
-      if (isSimulationMode()) {
-        console.log('🎭 Modo simulación activado - Simulando verificación...');
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Simular delay
-        
-        const simResponse = getSimulationResponse();
-        console.log('✅ Verificación simulada:', simResponse);
-        
-        return {
-          success: true,
-          transaction_id: transactionId,
-          status: 'APPROVED'
-        };
-      }
-      
-      console.log('🔍 Verificando estado de transacción:', transactionId);
-      
-      // Obtener token de acceso OAuth
-      const accessToken = await this.getAccessToken();
-      
-      const apiUrl = getWompiApiUrl();
-      const response = await fetch(`${apiUrl}/transactions/${transactionId}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error verificando transacción: ${response.status}`);
-      }
-
-      const transactionData: WompiTransaction = await response.json();
-      console.log('✅ Estado de transacción:', transactionData.status);
-
-      return {
-        success: true,
-        transaction_id: transactionId,
-        status: transactionData.status
-      };
-
-    } catch (error) {
-      console.error('❌ Error verificando transacción:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      };
-    }
-  }
-
   // Crear un enlace de pago
   public async createPaymentLink(paymentData: Omit<WompiPaymentRequest, 'payment_method'>): Promise<WompiPaymentResponse> {
     try {
       // Verificar si estamos en modo simulación
       if (isSimulationMode()) {
         console.log('🎭 Modo simulación activado - Simulando enlace de pago...');
-        await new Promise(resolve => setTimeout(resolve, 2000)); // Simular delay
+        await new Promise(resolve => setTimeout(resolve, 2000));
         
         const simResponse = getSimulationResponse();
         console.log('✅ Enlace de pago simulado:', simResponse);
@@ -217,7 +60,6 @@ export class WompiService {
       console.log('📍 URL de la API:', apiUrl);
       console.log('📋 Datos del pago:', paymentData);
       
-      // Usar nuestra nueva API route única
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -252,36 +94,6 @@ export class WompiService {
 
     } catch (error) {
       console.error('❌ Error creando enlace de pago:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      };
-    }
-  }
-
-  // Procesar pago con tarjeta
-  public async processCardPayment(paymentData: WompiPaymentRequest): Promise<WompiPaymentResponse> {
-    try {
-      console.log('💳 Procesando pago con tarjeta...');
-      
-      // Crear la transacción
-      const transaction = await this.createPaymentTransaction(paymentData);
-      
-      if (!transaction.success) {
-        return transaction;
-      }
-
-      // Verificar el estado después de un breve delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      if (transaction.transaction_id) {
-        return await this.verifyTransactionStatus(transaction.transaction_id);
-      }
-
-      return transaction;
-
-    } catch (error) {
-      console.error('❌ Error procesando pago con tarjeta:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Error desconocido'
