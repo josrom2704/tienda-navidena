@@ -212,7 +212,7 @@ export class WompiService {
         };
       }
       
-      const apiUrl = '/api/wompi-pay';
+      const apiUrl = '/api/wompi-payment';
       console.log('🔗 Creando enlace de pago a través de nuestra API...');
       console.log('📍 URL de la API:', apiUrl);
       console.log('📋 Datos del pago:', paymentData);
