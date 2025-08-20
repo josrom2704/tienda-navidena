@@ -64,6 +64,13 @@ export function CategoriesGrid() {
       try {
         setLoading(true);
         const data = await getCategoriasByDominio(dominio);
+        
+        // 🔍 LOG TEMPORAL PARA DEBUGGING
+        console.log("🔍 [DEBUG] Categorías recibidas del backend:", data);
+        console.log("🔍 [DEBUG] Tipo de datos:", typeof data);
+        console.log("🔍 [DEBUG] Es array:", Array.isArray(data));
+        console.log("🔍 [DEBUG] Longitud:", Array.isArray(data) ? data.length : 'N/A');
+        
         setCategorias(data);
         setError(null);
       } catch (err) {
