@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Gift, Star, Crown, Sparkles } from "lucide-react";
+import Image from "next/image";
 
 export function HeroBanner() {
   return (
@@ -80,12 +81,15 @@ export function HeroBanner() {
 
           <div className="relative scale-in">
             <div className="relative z-10">
-              <div className="w-full h-[700px] bg-gradient-to-br from-white to-gray-100 rounded-2xl border-2 border-yellow-200 flex items-center justify-center shadow-lg">
-                <div className="text-center space-y-4">
-                  <Sparkles className="w-16 h-16 text-yellow-400 mx-auto" />
-                  <p className="text-gray-600 text-lg">Imagen de Canasta Premium</p>
-                  <p className="text-gray-500 text-sm">Lugar para imagen destacada</p>
-                </div>
+              <div className="w-full h-[700px] bg-gradient-to-br from-white to-gray-100 rounded-2xl border-2 border-yellow-200 flex items-center justify-center shadow-lg overflow-hidden">
+                <Image
+                  src="/canasta-premium.jpg"
+                  alt="Canasta Premium de Frutas y Regalos Navideños"
+                  width={600}
+                  height={700}
+                  className="w-full h-full object-cover rounded-xl"
+                  priority
+                />
               </div>
 
               {/* Floating elements */}
