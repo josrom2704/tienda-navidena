@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Playfair_Display, Inter } from "next/font/google"
+import { Playfair_Display, Inter, Cormorant_Garamond, Libre_Baskerville } from "next/font/google"
 import "./globals.css"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
@@ -18,6 +18,18 @@ const inter = Inter({
   variable: "--font-inter",
 })
 
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-cormorant",
+})
+
+const libreBaskerville = Libre_Baskerville({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-libre-baskerville",
+})
+
 export const metadata: Metadata = {
   title: "Canastas Navideñas Premium | Regalos Especiales",
   description:
@@ -32,7 +44,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body className={`${playfair.variable} ${inter.variable} font-inter`}>
+      <body className={`${playfair.variable} ${inter.variable} ${cormorant.variable} ${libreBaskerville.variable} font-sans bg-elegant-white text-elegant-black`}>
         <CartProvider>
           <Header />
           <main className="min-h-screen">{children}</main>

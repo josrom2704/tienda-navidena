@@ -128,8 +128,8 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
     <div className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="firstName" className="text-white">
-            <User className="w-4 h-4 inline mr-2" />
+          <Label htmlFor="firstName" className="text-elegant-black font-medium">
+            <User className="w-4 h-4 inline mr-2 text-gold-500" />
             Nombre
           </Label>
           <Input
@@ -137,14 +137,14 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
             name="firstName"
             value={formData.firstName}
             onChange={handleInputChange}
-            className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+            className="form-input"
             placeholder="Tu nombre"
             required
           />
         </div>
         <div>
-          <Label htmlFor="lastName" className="text-white">
-            <User className="w-4 h-4 inline mr-2" />
+          <Label htmlFor="lastName" className="text-elegant-black font-medium">
+            <User className="w-4 h-4 inline mr-2 text-gold-500" />
             Apellido
           </Label>
           <Input
@@ -152,7 +152,7 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
             name="lastName"
             value={formData.lastName}
             onChange={handleInputChange}
-            className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+            className="form-input"
             placeholder="Tu apellido"
             required
           />
@@ -160,8 +160,8 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
       </div>
 
       <div>
-        <Label htmlFor="email" className="text-white">
-          <Mail className="w-4 h-4 inline mr-2" />
+        <Label htmlFor="email" className="text-elegant-black font-medium">
+          <Mail className="w-4 h-4 inline mr-2 text-gold-500" />
           Email
         </Label>
         <Input
@@ -170,15 +170,15 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
           type="email"
           value={formData.email}
           onChange={handleInputChange}
-          className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+          className="form-input"
           placeholder="tu@email.com"
           required
         />
       </div>
 
       <div>
-        <Label htmlFor="phone" className="text-white">
-          <Phone className="w-4 h-4 inline mr-2" />
+        <Label htmlFor="phone" className="text-elegant-black font-medium">
+          <Phone className="w-4 h-4 inline mr-2 text-gold-500" />
           Teléfono
         </Label>
         <Input
@@ -186,7 +186,7 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
           name="phone"
           value={formData.phone}
           onChange={handleInputChange}
-          className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+          className="form-input"
           placeholder="+503 7123 4567"
           required
         />
@@ -197,14 +197,14 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
           type="button"
           onClick={nextStep}
           disabled={!isFormValid()}
-          className="luxury-button"
+          className="gold-button"
         >
           {isFormValid() ? 'Continuar' : 'Completa los campos requeridos'}
         </Button>
         
         {/* Indicador de campos faltantes */}
         {!isFormValid() && currentStep === 1 && (
-          <div className="text-red-400 text-sm mt-2 text-center">
+          <div className="text-red-500 text-sm mt-2 text-center">
             {formData.firstName.trim() === "" && "• Nombre requerido "}
             {formData.lastName.trim() === "" && "• Apellido requerido "}
             {formData.email.trim() === "" && "• Email requerido "}
@@ -218,8 +218,8 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
   const renderStep2 = () => (
     <div className="space-y-6">
       <div>
-        <Label htmlFor="address" className="text-white">
-          <MapPin className="w-4 h-4 inline mr-2" />
+        <Label htmlFor="address" className="text-elegant-black font-medium">
+          <MapPin className="w-4 h-4 inline mr-2 text-gold-500" />
           Dirección
         </Label>
         <Input
@@ -227,7 +227,7 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
           name="address"
           value={formData.address}
           onChange={handleInputChange}
-          className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+          className="form-input"
           placeholder="Dirección completa"
           required
         />
@@ -235,25 +235,25 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="city" className="text-white">Ciudad</Label>
+          <Label htmlFor="city" className="text-elegant-black font-medium">Ciudad</Label>
           <Input
             id="city"
             name="city"
             value={formData.city}
             onChange={handleInputChange}
-            className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+            className="form-input"
             placeholder="San Salvador"
             required
           />
         </div>
         <div>
-          <Label htmlFor="postalCode" className="text-white">Código Postal</Label>
+          <Label htmlFor="postalCode" className="text-elegant-black font-medium">Código Postal</Label>
           <Input
             id="postalCode"
             name="postalCode"
             value={formData.postalCode}
             onChange={handleInputChange}
-            className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+            className="form-input"
             placeholder="01001"
             required
           />
@@ -261,15 +261,15 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
       </div>
 
       <div>
-        <Label htmlFor="country" className="text-white">País</Label>
+        <Label htmlFor="country" className="text-elegant-black font-medium">País</Label>
         <Select
           value={formData.country}
           onValueChange={(value) => handleSelectChange("country", value)}
         >
-          <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+          <SelectTrigger className="form-input">
             <SelectValue placeholder="Selecciona tu país" />
           </SelectTrigger>
-          <SelectContent className="bg-gray-800 border-gray-600 text-white">
+          <SelectContent className="bg-elegant-white border-gold-400">
             <SelectItem value="El Salvador">El Salvador</SelectItem>
             <SelectItem value="Guatemala">Guatemala</SelectItem>
             <SelectItem value="Honduras">Honduras</SelectItem>
@@ -296,13 +296,13 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
       </div>
 
       <div>
-        <Label htmlFor="notes" className="text-white">Notas Adicionales</Label>
+        <Label htmlFor="notes" className="text-elegant-black font-medium">Notas Adicionales</Label>
         <Textarea
           id="notes"
           name="notes"
           value={formData.notes}
           onChange={handleInputChange}
-          className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+          className="form-input"
           placeholder="Instrucciones especiales para la entrega..."
           rows={3}
         />
@@ -313,14 +313,14 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
           type="button"
           variant="outline"
           onClick={prevStep}
-          className="border-2 border-green-400 text-green-400 hover:bg-green-400 hover:text-black transition-colors duration-200"
+          className="elegant-button"
         >
           Atrás
         </Button>
         <Button
           type="button"
           onClick={nextStep}
-          className="luxury-button"
+          className="gold-button"
         >
           {isFormValid() ? 'Continuar al Pago' : 'Completa los campos requeridos'}
         </Button>
@@ -328,7 +328,7 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
       
       {/* Indicador de campos faltantes */}
       {!isFormValid() && currentStep === 2 && (
-        <div className="text-red-400 text-sm mt-2 text-center">
+        <div className="text-red-500 text-sm mt-2 text-center">
           {formData.address.trim() === "" && "• Dirección requerida "}
           {formData.city.trim() === "" && "• Ciudad requerida "}
           {formData.postalCode.trim() === "" && "• Código postal requerido"}
@@ -340,18 +340,18 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
 const renderStep3 = () => (
   <div className="space-y-6">
     <div className="text-center">
-      <h3 className="text-xl font-semibold text-white mb-4">
+      <h3 className="text-xl font-semibold text-elegant-black mb-4 title-elegant">
         Resumen del Pedido
       </h3>
-      <div className="bg-gray-800 p-4 rounded-lg">
-        <p className="text-gray-300 mb-2">
-          <span className="font-medium">Cliente:</span> {formData.firstName} {formData.lastName}
+      <div className="bg-cream-100 p-4 rounded-lg border border-gold-200">
+        <p className="text-elegant-gray mb-2">
+          <span className="font-medium text-elegant-black">Cliente:</span> {formData.firstName} {formData.lastName}
         </p>
-        <p className="text-gray-300 mb-2">
-          <span className="font-medium">Email:</span> {formData.email}
+        <p className="text-elegant-gray mb-2">
+          <span className="font-medium text-elegant-black">Email:</span> {formData.email}
         </p>
-        <p className="text-gray-300 mb-2">
-          <span className="font-medium">Total:</span> ${(total + (total >= 250 ? 0 : 3)).toLocaleString()}
+        <p className="text-elegant-gray mb-2">
+          <span className="font-medium text-elegant-black">Total:</span> ${(total + (total >= 250 ? 0 : 3)).toLocaleString()}
         </p>
       </div>
     </div>
@@ -372,7 +372,7 @@ const renderStep3 = () => (
         type="button"
         variant="outline"
         onClick={prevStep}
-        className="border-2 border-green-400 text-green-400 hover:bg-green-400 hover:text-black transition-colors duration-200"
+        className="elegant-button"
       >
         Atrás
       </Button>
@@ -381,13 +381,13 @@ const renderStep3 = () => (
 );
 
   return (
-    <div className="min-h-screen bg-black py-20">
+    <div className="min-h-screen bg-cream-50 py-20">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="mb-8">
           <Button
             variant="ghost"
             onClick={onBack}
-            className="text-white hover:text-green-400 hover:bg-gray-800"
+            className="text-elegant-black hover:text-gold-500 hover:bg-cream-100"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Volver al Carrito
@@ -397,9 +397,9 @@ const renderStep3 = () => (
         <div className="grid lg:grid-cols-3 gap-12">
           {/* Formulario de Checkout */}
           <div className="lg:col-span-2">
-            <Card className="bg-gray-900 border-2 border-green-400/30 luxury-glow">
+            <Card className="elegant-card">
               <CardHeader>
-                <CardTitle className="text-2xl font-playfair font-bold text-white text-center">
+                <CardTitle className="text-2xl title-elegant text-elegant-black text-center">
                   {currentStep === 1 && "Información Personal"}
                   {currentStep === 2 && "Dirección de Envío"}
                   {currentStep === 3 && "Pago Seguro"}
@@ -411,7 +411,7 @@ const renderStep3 = () => (
                     <div
                       key={step}
                       className={`w-3 h-3 rounded-full ${
-                        step <= currentStep ? 'bg-green-400' : 'bg-gray-600'
+                        step <= currentStep ? 'bg-gold-500' : 'bg-cream-300'
                       }`}
                     />
                   ))}
