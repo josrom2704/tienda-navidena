@@ -1,134 +1,158 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import PayPalService, { PaymentDetails } from "@/lib/paypal-service";
-import { CreditCard, Loader2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2, CheckCircle, XCircle, CreditCard, Shield, Lock } from "lucide-react";
 
 interface PayPalButtonProps {
   amount: number;
-  orderNumber: string;
-  customerEmail: string;
-  customerName: string;
-  onPaymentSuccess: (transactionId: string) => void;
-  onPaymentError: (error: string) => void;
+  onSuccess: (paymentDetails: any) => void;
+  onError: (error: string) => void;
+  disabled?: boolean;
 }
 
-export function PayPalButton({ 
-  amount, 
-  orderNumber, 
-  customerEmail, 
-  customerName, 
-  onPaymentSuccess, 
-  onPaymentError 
-}: PayPalButtonProps) {
-  const [isProcessing, setIsProcessing] = useState(false);
-  const { toast } = useToast();
-  const paypalService = PayPalService.getInstance();
+export function PayPalButton({ amount, onSuccess, onError, disabled = false }: PayPalButtonProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'success' | 'error'>('idle');
 
-  const handlePayPalPayment = async () => {
-    setIsProcessing(true);
+  const handlePayment = async () => {
+    if (disabled || isLoading) return;
+
+    setIsLoading(true);
+    setPaymentStatus('processing');
 
     try {
-      // Crear orden de pago
-      const paymentDetails: PaymentDetails = {
-        amount,
+      // Simular proceso de pago con PayPal
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
+      // Simular éxito del pago
+      const paymentDetails = {
+        id: `paypal_${Date.now()}`,
+        amount: amount,
         currency: 'USD',
-        description: `Pedido ${orderNumber} - Tienda Navideña`,
-        orderNumber,
-        customerEmail,
-        customerName,
+        status: 'completed',
+        method: 'paypal',
+        timestamp: new Date().toISOString()
       };
 
-      const paymentResponse = await paypalService.createPaymentOrder(paymentDetails);
-
-      if (!paymentResponse.success) {
-        throw new Error(paymentResponse.error || 'Error al crear la orden de pago');
-      }
-
-      // En producción, aquí se redirigiría al usuario a PayPal
-      // Por ahora simulamos el proceso completo
-      toast({
-        title: "Redirigiendo a PayPal",
-        description: "Serás redirigido a PayPal para completar tu pago.",
-      });
-
-      // Simular redirección a PayPal
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Simular captura del pago
-      const captureResponse = await paypalService.capturePayment(paymentResponse.paymentId!);
-
-      if (!captureResponse.success) {
-        throw new Error('Error al procesar el pago');
-      }
-
-      // Verificar estado del pago
-      const isPaymentSuccessful = await paypalService.verifyPaymentStatus(paymentResponse.paymentId!);
-
-      if (!isPaymentSuccessful) {
-        throw new Error('El pago no pudo ser verificado');
-      }
-
-      toast({
-        title: "¡Pago exitoso!",
-        description: `Tu pago ha sido procesado. ID de transacción: ${captureResponse.transactionId}`,
-      });
-
-      onPaymentSuccess(captureResponse.transactionId!);
-
+      setPaymentStatus('success');
+      onSuccess(paymentDetails);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Error desconocido en el pago';
-      
-      toast({
-        title: "Error en el pago",
-        description: errorMessage,
-        variant: "destructive",
-      });
-
-      onPaymentError(errorMessage);
+      setPaymentStatus('error');
+      onError('Error en el procesamiento del pago');
     } finally {
-      setIsProcessing(false);
+      setIsLoading(false);
     }
   };
 
-  return (
-    <div className="space-y-4">
-      <Button
-        onClick={handlePayPalPayment}
-        disabled={isProcessing}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 text-lg font-medium tracking-wide"
-        size="lg"
-      >
-        {isProcessing ? (
+  const getButtonContent = () => {
+    switch (paymentStatus) {
+      case 'processing':
+        return (
           <>
             <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-            Procesando con PayPal...
+            Procesando Pago...
           </>
-        ) : (
+        );
+      case 'success':
+        return (
+          <>
+            <CheckCircle className="w-5 h-5 mr-2 text-green-500" />
+            Pago Exitoso
+          </>
+          );
+      case 'error':
+        return (
+          <>
+            <XCircle className="w-5 h-5 mr-2 text-red-500" />
+            Error en el Pago
+          </>
+        );
+      default:
+        return (
           <>
             <CreditCard className="w-5 h-5 mr-2" />
             Pagar con PayPal
           </>
-        )}
+        );
+    }
+  };
+
+  const getButtonClasses = () => {
+    if (paymentStatus === 'success') {
+      return 'bg-green-600 hover:bg-green-700 text-white cursor-default';
+    }
+    if (paymentStatus === 'error') {
+      return 'bg-red-600 hover:bg-red-700 text-white';
+    }
+    if (isLoading || disabled) {
+      return 'bg-gray-400 cursor-not-allowed text-white';
+    }
+    return 'w-full bg-blue-600 hover:bg-blue-700 text-white py-4 text-lg font-medium tracking-wide';
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Botón principal de PayPal */}
+      <Button
+        onClick={handlePayment}
+        disabled={disabled || isLoading || paymentStatus === 'success'}
+        className={getButtonClasses()}
+        size="lg"
+      >
+        {getButtonContent()}
       </Button>
 
-      <div className="text-center text-sm text-gray-400">
-        <p>🔒 Pago seguro procesado por PayPal</p>
-        <p>💳 Acepta tarjetas de crédito, débito y cuentas PayPal</p>
-      </div>
-
-      {/* Información de la cuenta bancaria */}
-      <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-600">
-        <h4 className="font-semibold text-white mb-2">🏦 Información de Pago</h4>
-        <div className="text-sm text-gray-300 space-y-1">
-          <p>El dinero será depositado en nuestra cuenta bancaria:</p>
-          <p><strong>Banco:</strong> {paypalService.getBankAccountInfo().bankName}</p>
-          <p><strong>Moneda:</strong> USD (Dólares Americanos)</p>
-          <p><strong>País:</strong> {paypalService.getBankAccountInfo().country}</p>
+      {/* Información de seguridad */}
+      <div className="bg-white/50 p-4 rounded-lg border border-yellow-200">
+        <h4 className="font-semibold text-black mb-2">🏦 Información de Pago</h4>
+        <div className="text-sm text-gray-600 space-y-1">
+          <div className="flex items-center gap-2">
+            <Shield className="w-4 h-4 text-green-600" />
+            <span>Pago seguro con encriptación SSL</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Lock className="w-4 h-4 text-blue-600" />
+            <span>Tus datos están protegidos</span>
+          </div>
+          <div className="text-center text-sm text-gray-500">
+            Al continuar, serás redirigido a PayPal para completar tu pago de forma segura.
+          </div>
         </div>
       </div>
+
+      {/* Estado del pago */}
+      {paymentStatus !== 'idle' && (
+        <div className={`p-4 rounded-lg border ${
+          paymentStatus === 'success' 
+            ? 'bg-green-50 border-green-200' 
+            : paymentStatus === 'error'
+            ? 'bg-red-50 border-red-200'
+            : 'bg-yellow-50 border-yellow-200'
+        }`}>
+          <div className="text-center">
+            {paymentStatus === 'processing' && (
+              <div className="flex items-center justify-center gap-2 text-yellow-700">
+                <Loader2 className="w-5 h-5 animate-spin" />
+                <span>Procesando tu pago...</span>
+              </div>
+            )}
+            {paymentStatus === 'success' && (
+              <div className="flex items-center justify-center gap-2 text-green-700">
+                <CheckCircle className="w-5 h-5" />
+                <span>¡Pago procesado exitosamente!</span>
+              </div>
+            )}
+            {paymentStatus === 'error' && (
+              <div className="flex items-center justify-center gap-2 text-red-700">
+                <XCircle className="w-5 h-5" />
+                <span>Error en el procesamiento del pago</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -47,7 +47,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Card
-      className="group luxury-card overflow-hidden transition-all duration-500 hover:scale-105 cursor-pointer bg-neutral-900 border-gold-500/30"
+      className="group product-card overflow-hidden transition-all duration-500 hover:scale-105 cursor-pointer"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -59,18 +59,18 @@ export function ProductCard({ product }: ProductCardProps) {
         />
 
         {/* Overlay */}
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute inset-0 bg-elegant-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
         {/* Featured badge */}
         {product.featured && (
-          <Badge className="absolute top-4 left-4 bg-gold-400 text-black font-bold px-3 py-1.5 border-0">
+          <Badge className="absolute top-4 left-4 bg-gold-500 text-elegant-white font-bold px-3 py-1.5 border-0">
             ⭐ Exclusivo
           </Badge>
         )}
 
         {/* Discount badge */}
         {discount > 0 && (
-          <Badge className="absolute top-4 right-4 bg-black/85 text-gold-300 border-2 border-gold-300 font-bold px-3 py-1.5">
+          <Badge className="absolute top-4 right-4 bg-elegant-black/90 text-gold-400 border-2 border-gold-400 font-bold px-3 py-1.5">
             -{discount}%
           </Badge>
         )}
@@ -79,7 +79,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <Button
           variant="ghost"
           size="icon"
-          className={`absolute top-4 right-4 ${discount > 0 ? "top-16" : ""} bg-white/90 hover:bg-white transition-all duration-300 ${isLiked ? "text-red-500" : "text-gray-600"}`}
+          className={`absolute top-4 right-4 ${discount > 0 ? "top-16" : ""} bg-elegant-white/90 hover:bg-elegant-white transition-all duration-300 ${isLiked ? "text-red-500" : "text-elegant-gray"}`}
           onClick={() => setIsLiked(!isLiked)}
           aria-label={isLiked ? "Quitar de favoritos" : "Añadir a favoritos"}
         >
@@ -92,7 +92,7 @@ export function ProductCard({ product }: ProductCardProps) {
         >
           <Button
             onClick={handleAddToCart}
-            className="luxury-button px-8 py-3 font-medium tracking-wide transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+            className="gold-button px-8 py-3 font-medium tracking-wide transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
           >
             <ShoppingCart className="w-4 h-4 mr-2" />
             Agregar al Carrito
@@ -100,40 +100,40 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
       </div>
 
-      <CardContent className="p-6 bg-neutral-900 text-neutral-100">
+      <CardContent className="p-6 bg-elegant-white text-elegant-black">
         {/* Rating */}
-        <div className="flex items-center gap-1 mb-3 text-gold-400">
+        <div className="flex items-center gap-1 mb-3 text-gold-500">
           {[...Array(5)].map((_, i) => (
-            <Star key={i} className="w-4 h-4 fill-gold-400 text-gold-400" />
+            <Star key={i} className="w-4 h-4 fill-gold-500 text-gold-500" />
           ))}
-          <span className="text-sm text-neutral-300 ml-2 font-medium">(4.9)</span>
+          <span className="text-sm text-elegant-gray ml-2 font-medium">(4.9)</span>
         </div>
 
         {/* Product name */}
-        <h3 className="text-xl font-playfair font-semibold text-white mb-3 group-hover:text-gold-400 transition-colors duration-300">
+        <h3 className="text-xl title-elegant text-elegant-black mb-3 group-hover:text-gold-500 transition-colors duration-300">
           {product.name}
         </h3>
 
         {/* Description */}
-        <p className="text-neutral-300 text-sm mb-4 line-clamp-2 leading-relaxed">
+        <p className="text-elegant-gray text-sm mb-4 line-clamp-2 leading-relaxed">
           {product.description}
         </p>
 
         {/* Price and category */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <span className="text-2xl font-playfair font-bold text-gold-400">
+            <span className="text-2xl title-elegant text-gold-500">
               ${product.price.toLocaleString()}
             </span>
             {product.originalPrice && (
-              <span className="text-lg text-neutral-400 line-through font-medium">
+              <span className="text-lg text-elegant-gray line-through font-medium">
                 ${product.originalPrice.toLocaleString()}
               </span>
             )}
           </div>
           <Badge
             variant="outline"
-            className="text-xs border-2 border-gold-400 text-gold-400 bg-gold-50/10 font-bold"
+            className="text-xs border-2 border-gold-400 text-gold-500 bg-gold-50/10 font-bold"
           >
             {product.category}
           </Badge>
@@ -142,7 +142,7 @@ export function ProductCard({ product }: ProductCardProps) {
         {/* Add to cart button */}
         <Button
           onClick={handleAddToCart}
-          className="w-full luxury-button py-3 font-medium tracking-wide"
+          className="w-full gold-button py-3 font-medium tracking-wide"
         >
           <ShoppingCart className="w-4 h-4 mr-2" />
           Agregar al Carrito

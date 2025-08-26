@@ -1,181 +1,163 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Minus, Plus, Trash2, ShoppingBag, Crown, Shield, Truck } from "lucide-react"
-import { useCart } from "@/components/cart-provider"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useCart } from "@/components/cart-provider";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Trash2, ShoppingBag, ArrowRight, Package, Truck, CheckCircle } from "lucide-react";
+import Link from "next/link";
 
 export default function CarritoPage() {
-  const { items, updateQuantity, removeItem, total, clearCart } = useCart()
-  const router = useRouter()
-
-
+  const { items, removeFromCart, updateQuantity, total } = useCart();
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-black py-20">
+      <div className="min-h-screen bg-white py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center max-w-md mx-auto">
-            <div className="w-32 h-32 bg-gradient-to-br from-gold-300 to-gold-400 rounded-full flex items-center justify-center mx-auto mb-8 luxury-glow">
-              <ShoppingBag className="w-16 h-16 text-black" />
+          <div className="text-center">
+            <div className="w-24 h-24 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg">
+              <ShoppingBag className="w-12 h-12 text-yellow-600" />
             </div>
-            <h1 className="text-4xl font-playfair font-bold text-white mb-6">Tu carrito está vacío</h1>
-            <p className="text-light mb-8 font-medium text-lg leading-relaxed">
-              Descubre nuestra exclusiva colección de regalos navideños de lujo
+            <h1 className="text-4xl font-serif font-bold text-black mb-6">Tu carrito está vacío</h1>
+            <p className="text-gray-600 text-xl mb-8 max-w-2xl mx-auto">
+              Parece que aún no has agregado productos a tu carrito. ¡Explora nuestro catálogo y encuentra los regalos perfectos!
             </p>
             <Link href="/catalogo">
-              <Button size="lg" className="luxury-button px-10 py-4 text-lg font-medium tracking-wide">
-                <Crown className="w-5 h-5 mr-2" />
-                Explorar Colección
+              <Button size="lg" className="bg-yellow-500 hover:bg-yellow-600 text-white px-10 py-4 text-lg font-medium tracking-wide">
+                Explorar Catálogo
+                <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </Link>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
-    <div className="min-h-screen bg-black py-20">
+    <div className="min-h-screen bg-white py-20">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl lg:text-5xl font-playfair font-bold text-white mb-4">
-            Carrito de <span className="text-gold-300">Compras</span>
-          </h1>
-          <p className="text-light font-medium text-lg">Revisa tus productos seleccionados</p>
-        </div>
+        <h1 className="text-4xl lg:text-5xl font-serif font-bold text-black mb-4">
+          Tu Carrito de Compras
+        </h1>
+        <p className="text-gray-600 text-xl mb-12">Revisa tus productos antes de finalizar la compra</p>
 
-        <div className="grid lg:grid-cols-3 gap-12">
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Lista de productos */}
           <div className="lg:col-span-2 space-y-6">
             {items.map((item) => (
-              <Card key={item.id} className="bg-white luxury-border">
-                <CardContent className="p-8">
-                  <div className="flex items-center space-x-6">
+              <Card key={item.id} className="bg-white border-2 border-yellow-200 shadow-md">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-6">
                     <img
-                      src={item.image || "/placeholder.svg"}
+                      src={item.image || "/placeholder.jpg"}
                       alt={item.name}
-                      className="w-24 h-24 object-cover rounded-lg luxury-border"
+                      className="w-24 h-24 object-cover rounded-lg border-2 border-yellow-200"
                     />
                     <div className="flex-1">
-                      <h3 className="text-xl font-playfair font-semibold text-gray-900 mb-2">{item.name}</h3>
-                      <p className="text-2xl font-bold text-gray-900">${item.price.toLocaleString()}</p>
+                      <h3 className="text-xl font-serif font-semibold text-black mb-2">{item.name}</h3>
+                      <p className="text-gray-600 mb-4">{item.description}</p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <label className="text-gray-700 font-medium">Cantidad:</label>
+                          <select
+                            value={item.quantity}
+                            onChange={(e) => updateQuantity(item.id, parseInt(e.target.value))}
+                            className="border border-yellow-300 rounded-md px-3 py-1 text-black bg-white"
+                          >
+                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                              <option key={num} value={num}>
+                                {num}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-2xl font-serif font-bold text-yellow-600">
+                            ${(item.price * item.quantity).toFixed(2)}
+                          </p>
+                          <p className="text-gray-500">${item.price.toFixed(2)} c/u</p>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-3">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        className="border-2 border-gold-400 text-gold-400 hover:bg-gold-50"
-                        aria-label="Disminuir cantidad"
-                      >
-                        <Minus className="w-4 h-4" />
-                      </Button>
-                      <span className="w-16 text-center font-bold text-lg">{item.quantity}</span>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="border-2 border-gold-400 text-gold-400 hover:bg-gold-50"
-                        aria-label="Aumentar cantidad"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </Button>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-playfair font-bold text-gray-900 mb-2">
-                        ${(item.price * item.quantity).toLocaleString()}
-                      </p>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeItem(item.id)}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50 font-medium"
-                        aria-label="Eliminar producto"
-                      >
-                        <Trash2 className="w-4 h-4 mr-1" />
-                        Eliminar
-                      </Button>
-                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeFromCart(item.id)}
+                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
 
-          <div className="space-y-8">
-            <Card className="bg-black border-2 border-gold-400 luxury-glow">
+          {/* Resumen del pedido */}
+          <div className="lg:col-span-1">
+            <Card className="bg-white border-2 border-yellow-200 shadow-lg">
               <CardHeader>
-                <CardTitle className="text-2xl font-playfair text-gold-300 text-center">Resumen del Pedido</CardTitle>
+                <CardTitle className="text-2xl font-serif font-bold text-black">Resumen del Pedido</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6 p-8">
-                <div className="flex justify-between text-light">
-                  <span className="font-medium">Subtotal:</span>
-                  <span className="font-bold">${total.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-light">
-                  <span className="font-medium">Envío:</span>
-                  <span className={`font-bold ${total >= 250 ? 'text-gold-300' : 'text-white'}`}>
-                    {total >= 250 ? 'Gratuito' : '$3'}
-                  </span>
-                </div>
-                <div className="border-t border-gold-400/30 pt-6">
-                  <div className="flex justify-between text-2xl font-playfair font-bold">
-                    <span className="text-light">Total:</span>
-                    <span className="text-gold-300">${(total + (total >= 250 ? 0 : 3)).toLocaleString()}</span>
+              <CardContent className="space-y-6">
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Subtotal:</span>
+                    <span className="font-medium text-black">${total.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Envío:</span>
+                    <span className="font-medium text-black">Gratis</span>
+                  </div>
+                  <div className="border-t border-yellow-200 pt-3">
+                    <div className="flex justify-between">
+                      <span className="text-xl font-semibold text-black">Total:</span>
+                      <span className={`text-2xl font-bold ${total >= 250 ? 'text-yellow-600' : 'text-black'}`}>
+                        ${total.toFixed(2)}
+                      </span>
+                    </div>
+                    {total >= 250 && (
+                      <p className="text-yellow-600 text-sm mt-1">¡Envío gratuito incluido!</p>
+                    )}
                   </div>
                 </div>
-                <Button 
-                  className="w-full luxury-button py-4 text-lg font-medium tracking-wide" 
-                  size="lg"
-                  onClick={() => router.push("/checkout")}
-                >
-                  <Crown className="w-5 h-5 mr-2" />
-                  Proceder al Pago
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full border-2 border-gray-600 text-light hover:bg-gray-900 hover:text-white bg-transparent font-medium"
-                  onClick={clearCart}
-                >
-                  Vaciar Carrito
-                </Button>
-              </CardContent>
-            </Card>
 
-            <Card className="bg-gradient-to-br from-gold-400/15 to-gold-600/15 border-2 border-gold-400/30">
-              <CardContent className="p-8 text-center">
-                <Shield className="w-12 h-12 text-gold-300 mx-auto mb-4" />
-                <h3 className="font-playfair font-semibold mb-3 text-light text-lg">Compra Segura</h3>
-                <p className="text-medium font-medium leading-relaxed">
-                  Tu información está protegida con encriptación de nivel bancario. Garantía de satisfacción 100%.
-                </p>
-              </CardContent>
-            </Card>
+                <div className="space-y-3">
+                  <Link href="/checkout" className="w-full">
+                    <Button className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-4 text-lg font-medium tracking-wide">
+                      Proceder al Pago
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </Button>
+                  </Link>
+                  
+                  <Button
+                    variant="outline"
+                    className="w-full border-2 border-yellow-200 text-yellow-600 hover:bg-yellow-50 bg-transparent font-medium"
+                  >
+                    Continuar Comprando
+                  </Button>
+                </div>
 
-            <Card className="bg-gradient-to-br from-green-400/15 to-green-600/15 border-2 border-green-400/30">
-              <CardContent className="p-8 text-center">
-                <Truck className="w-12 h-12 text-green-400 mx-auto mb-4" />
-                <h3 className="font-playfair font-semibold mb-3 text-light text-lg">Envío Premium</h3>
-                <p className="text-medium font-medium leading-relaxed">
-                  {total >= 250 ? (
-                    <>Envío <span className="text-green-400 font-bold">GRATUITO</span> en 24-48 horas</>
-                  ) : (
-                    <>Envío por <span className="text-green-400 font-bold">$3</span> en 24-48 horas</>
-                  )}
-                  . Empaque de lujo incluido con tarjeta personalizada.
-                </p>
-                {total < 250 && (
-                  <p className="text-green-400 text-sm font-medium mt-2">
-                    ¡Agrega ${(250 - total).toFixed(2)} más para envío gratuito!
-                  </p>
-                )}
+                {/* Información adicional */}
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 space-y-3">
+                  <div className="flex items-center gap-3">
+                    <Package className="w-5 h-5 text-yellow-600" />
+                    <span className="text-sm text-gray-700">Envío en 24-48 horas</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Truck className="w-5 h-5 text-yellow-600" />
+                    <span className="text-sm text-gray-700">Entrega premium incluida</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-yellow-600" />
+                    <span className="text-sm text-gray-700">Garantía de satisfacción</span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,119 +1,112 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Mail, Package, Truck, Crown, Home, ShoppingBag } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CheckCircle, Mail, Package, Truck, Home, Clock, Shield } from "lucide-react";
 import Link from "next/link";
 
-interface OrderConfirmationProps {
-  orderNumber: string;
-  onContinueShopping: () => void;
-}
-
-export function OrderConfirmation({ orderNumber, onContinueShopping }: OrderConfirmationProps) {
+export function OrderConfirmation() {
   return (
-    <div className="min-h-screen bg-black py-20">
-      <div className="container mx-auto px-4 max-w-2xl">
-        <div className="text-center mb-12">
-          <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-green-500 rounded-full flex items-center justify-center mx-auto mb-6 luxury-glow">
-            <CheckCircle className="w-12 h-12 text-white" />
+    <div className="min-h-screen bg-white py-20">
+      <div className="container mx-auto px-4">
+        <div className="max-w-4xl mx-auto">
+          {/* Header de confirmación */}
+          <div className="text-center mb-16 fade-in-up">
+            <div className="w-32 h-32 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+              <CheckCircle className="w-12 h-12 text-green-600" />
+            </div>
+            <h1 className="text-4xl lg:text-5xl font-serif font-bold text-black mb-4">
+              ¡Pedido Confirmado!
+            </h1>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Tu pedido ha sido procesado exitosamente. Recibirás un email de confirmación en breve.
+            </p>
           </div>
-          <h1 className="text-4xl lg:text-5xl font-playfair font-bold text-white mb-4">
-            ¡Pedido <span className="text-green-400">Confirmado</span>!
-          </h1>
-          <p className="text-light font-medium text-lg">
-            Tu pedido ha sido procesado exitosamente
-          </p>
-        </div>
 
-        <Card className="bg-gray-900 border-2 border-green-400/30 luxury-glow mb-8">
-          <CardContent className="p-8 text-center">
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-2xl font-playfair font-semibold text-white mb-2">
-                  Número de Orden
-                </h2>
-                <p className="text-3xl font-mono font-bold text-green-400 bg-gray-800 px-6 py-3 rounded-lg">
-                  {orderNumber}
-                </p>
-              </div>
-
-              <div className="bg-gray-800/50 p-6 rounded-lg border border-gray-600">
-                <h3 className="font-semibold text-white mb-4">¿Qué sigue?</h3>
-                <div className="space-y-4 text-left">
-                  <div className="flex items-start space-x-3">
-                    <Mail className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+          {/* Información del pedido */}
+          <Card className="bg-white border-2 border-green-200 shadow-lg mb-8">
+            <CardHeader>
+              <CardTitle className="text-2xl font-serif font-bold text-black text-center">
+                Detalles del Pedido
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8">
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-black mb-4">¿Qué sigue?</h3>
+                  
+                  <div className="flex items-start gap-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <Mail className="w-6 h-6 text-green-600 mt-1" />
                     <div>
-                      <p className="text-white font-medium">Email de confirmación</p>
-                      <p className="text-gray-300 text-sm">
-                        Recibirás un email con todos los detalles de tu pedido
-                      </p>
+                      <p className="text-black font-medium">Email de confirmación</p>
+                      <p className="text-gray-600 text-sm">Recibirás un email con todos los detalles</p>
                     </div>
                   </div>
-                  
-                  <div className="flex items-start space-x-3">
-                    <Package className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+
+                  <div className="flex items-start gap-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <Package className="w-6 h-6 text-blue-600 mt-1" />
                     <div>
-                      <p className="text-white font-medium">Preparación del pedido</p>
-                      <p className="text-gray-300 text-sm">
-                        Tu pedido será preparado con cuidado en las próximas 24 horas
-                      </p>
+                      <p className="text-black font-medium">Preparación del pedido</p>
+                      <p className="text-gray-600 text-sm">Nuestro equipo prepara tu pedido con cuidado</p>
                     </div>
                   </div>
+
+                  <div className="flex items-start gap-4 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                    <Truck className="w-6 h-6 text-purple-600 mt-1" />
+                    <div>
+                      <p className="text-black font-medium">Envío premium</p>
+                      <p className="text-gray-600 text-sm">Envío en 24-48 horas con seguimiento</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-black mb-4">Información importante</h3>
                   
-                                     <div className="flex items-start space-x-3">
-                     <Truck className="w-5 h-5 text-gold-400 mt-0.5 flex-shrink-0" />
-                     <div>
-                       <p className="text-white font-medium">Envío premium</p>
-                       <p className="text-gray-300 text-sm">
-                         Entrega en 24-48 horas con seguimiento en tiempo real
-                       </p>
-                     </div>
-                   </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <Clock className="w-5 h-5 text-yellow-600" />
+                      <span className="text-sm text-gray-700">Tiempo de entrega: 24-48 horas</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <Shield className="w-5 h-5 text-blue-600" />
+                      <span className="text-sm text-gray-700">Garantía de satisfacción 100%</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <Package className="w-5 h-5 text-green-600" />
+                      <span className="text-sm text-gray-700">Empaque premium incluido</span>
+                    </div>
+                  </div>
                 </div>
               </div>
+            </CardContent>
+          </Card>
 
-              <div className="bg-gradient-to-r from-gold-400/20 to-gold-600/20 p-6 rounded-lg border border-gold-400/30">
-                <Crown className="w-8 h-8 text-gold-400 mx-auto mb-3" />
-                <h3 className="font-semibold text-white mb-2">¡Gracias por elegirnos!</h3>
-                <p className="text-gray-300 text-sm">
-                  Has seleccionado productos de la más alta calidad para hacer de esta Navidad 
-                  una experiencia inolvidable.
-                </p>
-              </div>
+          {/* Botones de acción */}
+          <div className="text-center space-y-4">
+            <h3 className="font-semibold text-black mb-2">¡Gracias por elegirnos!</h3>
+            <p className="text-gray-600 mb-6">
+              Si tienes alguna pregunta, no dudes en contactarnos.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/">
+                <Button className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-4 text-lg font-medium tracking-wide">
+                  <Home className="w-5 h-5 mr-2" />
+                  Volver al Inicio
+                </Button>
+              </Link>
+              
+              <Link href="/contacto">
+                <Button variant="outline" className="border-2 border-yellow-200 text-yellow-600 hover:bg-yellow-50 px-8 py-4 text-lg font-medium">
+                  <Mail className="w-5 h-5 mr-2" />
+                  Contactar Soporte
+                </Button>
+              </Link>
             </div>
-          </CardContent>
-        </Card>
-
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button
-            onClick={onContinueShopping}
-            className="luxury-button px-8 py-4 text-lg font-medium tracking-wide"
-            size="lg"
-          >
-            <ShoppingBag className="w-5 h-5 mr-2" />
-            Seguir Comprando
-          </Button>
-          
-          <Link href="/">
-            <Button
-              variant="outline"
-              className="border-2 border-gray-600 text-white hover:bg-gray-800 px-8 py-4 text-lg font-medium"
-              size="lg"
-            >
-              <Home className="w-5 h-5 mr-2" />
-              Ir al Inicio
-            </Button>
-          </Link>
-        </div>
-
-        <div className="mt-12 text-center">
-          <p className="text-gray-400 text-sm">
-            ¿Tienes alguna pregunta? Contáctanos en{" "}
-            <a href="mailto:soporte@tiendanavidena.com" className="text-gold-400 hover:underline">
-              soporte@tiendanavidena.com
-            </a>
-          </p>
+          </div>
         </div>
       </div>
     </div>

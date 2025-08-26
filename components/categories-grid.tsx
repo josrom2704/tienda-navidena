@@ -26,23 +26,23 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ categoria, icon, descriptio
   return (
     <a
       href={`/catalogo/${slug}`}
-      className="group block category-card p-6 rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-gold"
+      className="group block bg-white p-6 rounded-xl border border-yellow-200 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 hover:border-yellow-400"
     >
       <div className="relative text-center">
         {/* Icono personalizado */}
         <div className="flex justify-center mb-4">
-          <div className="p-3 bg-gold-100 rounded-full group-hover:bg-gold-200 transition-colors duration-300">
+          <div className="p-3 bg-yellow-100 rounded-full group-hover:bg-yellow-200 transition-colors duration-300">
             {icon}
           </div>
         </div>
         
         {/* Título */}
-        <h3 className="text-xl title-elegant text-elegant-black mb-2 group-hover:text-gold-600 transition-colors duration-300">
+        <h3 className="text-xl font-serif text-black mb-2 group-hover:text-yellow-600 transition-colors duration-300">
           {categoria}
         </h3>
         
         {/* Descripción */}
-        <p className="text-sm text-elegant-gray group-hover:text-elegant-dark transition-colors duration-300">
+        <p className="text-sm text-gray-600 group-hover:text-gray-800 transition-colors duration-300">
           {description}
         </p>
       </div>
@@ -90,7 +90,7 @@ export function CategoriesGrid() {
       'Ramos': <Sprout className="w-8 h-8 text-rose-500" />
     };
 
-    return iconMap[categoria] || <Sparkles className="w-8 h-8 text-gold-500" />;
+    return iconMap[categoria] || <Sparkles className="w-8 h-8 text-yellow-500" />;
   };
 
   // ✅ Descripciones personalizadas para cada categoría
@@ -111,17 +111,17 @@ export function CategoriesGrid() {
 
   if (loading) {
     return (
-      <section className="py-16 px-4 bg-elegant-white">
+      <section className="py-16 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl title-elegant text-center text-elegant-black mb-12">
+          <h2 className="text-3xl font-serif text-center text-black mb-12">
             Nuestras Categorías
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="category-card p-6 animate-pulse">
-                <div className="bg-gold-200 rounded-full w-16 h-16 mx-auto mb-4"></div>
-                <div className="bg-gold-200 h-6 rounded mb-2"></div>
-                <div className="bg-gold-200 h-4 rounded"></div>
+              <div key={i} className="bg-white p-6 rounded-xl border border-yellow-200 shadow-md animate-pulse">
+                <div className="bg-yellow-200 rounded-full w-16 h-16 mx-auto mb-4"></div>
+                <div className="bg-yellow-200 h-6 rounded mb-2"></div>
+                <div className="bg-yellow-200 h-4 rounded"></div>
               </div>
             ))}
           </div>
@@ -132,9 +132,9 @@ export function CategoriesGrid() {
 
   if (error) {
     return (
-      <section className="py-16 px-4 bg-elegant-white">
+      <section className="py-16 px-4 bg-white">
         <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-3xl title-elegant text-elegant-black mb-8">Nuestras Categorías</h2>
+          <h2 className="text-3xl font-serif text-black mb-8">Nuestras Categorías</h2>
           <p className="text-red-500 text-lg">{error}</p>
         </div>
       </section>
@@ -143,19 +143,19 @@ export function CategoriesGrid() {
 
   if (categorias.length === 0) {
     return (
-      <section className="py-16 px-4 bg-elegant-white">
+      <section className="py-16 px-4 bg-white">
         <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-3xl title-elegant text-elegant-black mb-8">Nuestras Categorías</h2>
-          <p className="text-elegant-gray text-lg">No hay categorías disponibles en este momento.</p>
+          <h2 className="text-3xl font-serif text-black mb-8">Nuestras Categorías</h2>
+          <p className="text-gray-500 text-lg">No hay categorías disponibles en este momento.</p>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="py-16 px-4 bg-elegant-white">
+    <section className="py-16 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-3xl title-elegant text-center text-elegant-black mb-12">
+        <h2 className="text-3xl font-serif text-center text-black mb-12">
           Nuestras Categorías
         </h2>
         

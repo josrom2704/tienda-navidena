@@ -1,262 +1,241 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Home, Package, Truck, XCircle } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CheckCircle, XCircle, Clock, Mail, Package, Truck, Home, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-function CheckoutSuccessContent() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const [orderDetails, setOrderDetails] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Obtener parámetros de la URL de Wompi
-    const transactionId = searchParams.get('transaction_id');
-    const status = searchParams.get('status');
-    const reference = searchParams.get('reference');
-
-    if (transactionId && status === 'APPROVED') {
-      // Pago exitoso
-      setOrderDetails({
-        transactionId,
-        reference,
-        status: 'APPROVED'
-      });
-    } else if (status === 'DECLINED') {
-      // Pago rechazado
-      setOrderDetails({
-        status: 'DECLINED',
-        reference
-      });
-    } else {
-      // Estado desconocido
-      setOrderDetails({
-        status: 'UNKNOWN',
-        reference
-      });
-    }
-
-    setIsLoading(false);
-  }, [searchParams]);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-400 mx-auto"></div>
-          <p className="text-white mt-4 text-lg">Verificando tu pago...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (orderDetails?.status === 'APPROVED') {
-    return (
-      <div className="min-h-screen bg-black py-20">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <Card className="bg-gray-900 border-2 border-green-400/30 luxury-glow">
-            <CardHeader className="text-center">
-              <div className="mx-auto w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mb-6">
-                <CheckCircle className="w-12 h-12 text-green-400" />
-              </div>
-              <CardTitle className="text-3xl font-playfair font-bold text-white">
-                ¡Pago Exitoso!
-              </CardTitle>
-              <p className="text-gray-300 text-lg mt-2">
-                Tu pedido ha sido procesado correctamente
-              </p>
-            </CardHeader>
-            <CardContent className="space-y-8">
-              {/* Detalles del pedido */}
-              <div className="bg-gray-800 p-6 rounded-lg">
-                <h3 className="text-xl font-semibold text-white mb-4">Detalles del Pedido</h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">Número de Orden:</span>
-                    <span className="text-white font-medium">{orderDetails.reference}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">ID de Transacción:</span>
-                    <span className="text-white font-medium">{orderDetails.transactionId}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">Estado:</span>
-                    <span className="text-green-400 font-bold">APROBADO</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Próximos pasos */}
-              <div className="space-y-6">
-                <h3 className="text-xl font-semibold text-white text-center">Próximos Pasos</h3>
-                
-                <div className="grid md:grid-cols-3 gap-6">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Package className="w-8 h-8 text-blue-400" />
-                    </div>
-                    <h4 className="text-white font-semibold mb-2">Preparación</h4>
-                    <p className="text-gray-300 text-sm">
-                      Tu pedido será preparado en las próximas 2-4 horas
-                    </p>
-                  </div>
-                  
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Truck className="w-8 h-8 text-green-400" />
-                    </div>
-                    <h4 className="text-white font-semibold mb-2">Envío</h4>
-                    <p className="text-gray-300 text-sm">
-                      Envío en 24-48 horas con seguimiento en tiempo real
-                    </p>
-                  </div>
-                  
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-gold-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <CheckCircle className="w-8 h-8 text-gold-400" />
-                    </div>
-                    <h4 className="text-white font-semibold mb-2">Entrega</h4>
-                    <p className="text-gray-300 text-sm">
-                      Entrega en la dirección especificada
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Información adicional */}
-              <div className="bg-blue-500/10 border border-blue-500/30 p-6 rounded-lg">
-                <h4 className="text-blue-400 font-semibold mb-3">📧 Confirmación por Email</h4>
-                <p className="text-gray-300 text-sm leading-relaxed">
-                  Hemos enviado un email de confirmación con todos los detalles de tu pedido. 
-                  También recibirás actualizaciones sobre el estado de tu envío.
-                </p>
-              </div>
-
-              {/* Botones de acción */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/">
-                  <Button className="luxury-button px-8 py-3">
-                    <Home className="w-5 h-5 mr-2" />
-                    Volver al Inicio
-                  </Button>
-                </Link>
-                
-                <Link href="/catalogo">
-                  <Button variant="outline" className="border-2 border-gray-600 text-white hover:bg-gray-800 px-8 py-3">
-                    <Package className="w-5 h-5 mr-2" />
-                    Ver Más Productos
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
-  if (orderDetails?.status === 'DECLINED') {
-    return (
-      <div className="min-h-screen bg-black py-20">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <Card className="bg-gray-900 border-2 border-red-400/30 luxury-glow">
-            <CardHeader className="text-center">
-              <div className="mx-auto w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mb-6">
-                <XCircle className="w-12 h-12 text-red-400" />
-              </div>
-              <CardTitle className="text-3xl font-playfair font-bold text-white">
-                Pago Rechazado
-              </CardTitle>
-              <p className="text-gray-300 text-lg mt-2">
-                Tu pago no pudo ser procesado
-              </p>
-            </CardHeader>
-            <CardContent className="space-y-8 text-center">
-              <div className="bg-red-500/10 border border-red-500/30 p-6 rounded-lg">
-                <h4 className="text-red-400 font-semibold mb-3">❌ Pago No Procesado</h4>
-                <p className="text-gray-300 text-sm leading-relaxed">
-                  Tu pago fue rechazado por el banco o hubo un problema con la transacción. 
-                  Por favor, verifica que tu tarjeta tenga fondos suficientes y que los datos sean correctos.
-                </p>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/checkout">
-                  <Button className="luxury-button px-8 py-3">
-                    Intentar Nuevamente
-                  </Button>
-                </Link>
-                
-                <Link href="/carrito">
-                  <Button variant="outline" className="border-2 border-gray-600 text-white hover:bg-gray-800 px-8 py-3">
-                    Volver al Carrito
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
-  // Estado desconocido
-  return (
-    <div className="min-h-screen bg-black py-20">
-      <div className="container mx-auto px-4 max-w-4xl">
-        <Card className="bg-gray-900 border-2 border-yellow-400/30 luxury-glow">
-          <CardHeader className="text-center">
-            <CardTitle className="text-3xl font-playfair font-bold text-white">
-              Estado del Pago Desconocido
-            </CardTitle>
-            <p className="text-gray-300 text-lg mt-2">
-              No pudimos determinar el estado de tu pago
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-8 text-center">
-            <div className="bg-yellow-500/10 border border-yellow-500/30 p-6 rounded-lg">
-              <h4 className="text-yellow-400 font-semibold mb-3">⚠️ Estado No Confirmado</h4>
-              <p className="text-gray-300 text-sm leading-relaxed">
-                El estado de tu pago no está claro. Te recomendamos verificar con tu banco 
-                o contactarnos para confirmar el estado de tu transacción.
-              </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/contacto">
-                <Button className="luxury-button px-8 py-3">
-                  Contactar Soporte
-                </Button>
-              </Link>
-              
-              <Link href="/">
-                <Button variant="outline" className="border-2 border-gray-600 text-white hover:bg-gray-800 px-8 py-3">
-                  Volver al Inicio
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
+interface OrderDetails {
+  reference: string;
+  transactionId: string;
+  amount: number;
+  status: string;
+  customerName: string;
+  customerEmail: string;
 }
 
 export default function CheckoutSuccessPage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-black flex items-center justify-center">
+  const searchParams = useSearchParams();
+  const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Simular obtención de detalles del pedido
+    const reference = searchParams.get("reference");
+    const transactionId = searchParams.get("transaction_id");
+    
+    if (reference && transactionId) {
+      // Simular delay de carga
+      setTimeout(() => {
+        setOrderDetails({
+          reference,
+          transactionId,
+          amount: 299.99,
+          status: "approved",
+          customerName: "Cliente Ejemplo",
+          customerEmail: "cliente@ejemplo.com"
+        });
+        setLoading(false);
+      }, 2000);
+    } else {
+      setError("No se encontraron los parámetros de la transacción");
+      setLoading(false);
+    }
+  }, [searchParams]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-400 mx-auto"></div>
-          <p className="text-white mt-4 text-lg">Cargando...</p>
+          <div className="w-32 h-32 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+            <Clock className="w-12 h-12 text-yellow-600" />
+          </div>
+          <p className="text-black mt-4 text-lg">Verificando tu pago...</p>
         </div>
       </div>
-    }>
-      <CheckoutSuccessContent />
-    </Suspense>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-white py-20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto text-center">
+            <div className="w-32 h-32 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+              <XCircle className="w-12 h-12 text-red-600" />
+            </div>
+            <h1 className="text-4xl font-serif font-bold text-black mb-4">Error en la Transacción</h1>
+            <p className="text-gray-600 text-xl mb-8">{error}</p>
+            <Link href="/checkout">
+              <Button className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-3">
+                Intentar de Nuevo
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (orderDetails?.status === "approved") {
+    return (
+      <div className="min-h-screen bg-white py-20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            {/* Header de éxito */}
+            <div className="text-center mb-16 fade-in-up">
+              <div className="w-32 h-32 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <CheckCircle className="w-12 h-12 text-green-600" />
+              </div>
+              <CardTitle className="text-3xl font-serif font-bold text-black">
+                ¡Pago Exitoso!
+              </CardTitle>
+              <p className="text-xl text-gray-600 mt-4">
+                Tu pedido ha sido procesado correctamente
+              </p>
+            </div>
+
+            {/* Detalles del pedido */}
+            <Card className="bg-white border-2 border-green-200 shadow-lg mb-8">
+              <CardHeader>
+                <h3 className="text-xl font-semibold text-black mb-4">Detalles del Pedido</h3>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <p className="text-gray-600 mb-2">Referencia:</p>
+                    <span className="text-black font-medium">{orderDetails.reference}</span>
+                  </div>
+                  <div>
+                    <p className="text-gray-600 mb-2">ID de Transacción:</p>
+                    <span className="text-black font-medium">{orderDetails.transactionId}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Próximos pasos */}
+            <Card className="bg-white border-2 border-blue-200 shadow-lg mb-8">
+              <CardHeader>
+                <h3 className="text-xl font-semibold text-black text-center">Próximos Pasos</h3>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-6">
+                  <div className="flex items-start gap-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <Package className="w-6 h-6 text-blue-600 mt-1" />
+                    <div>
+                      <h4 className="text-black font-semibold mb-2">Preparación</h4>
+                      <p className="text-gray-600 text-sm">Tu pedido será preparado en las próximas 24 horas</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <Truck className="w-6 h-6 text-green-600 mt-1" />
+                    <div>
+                      <h4 className="text-black font-semibold mb-2">Envío</h4>
+                      <p className="text-gray-600 text-sm">Envío en 24-48 horas con seguimiento en tiempo real</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                    <Mail className="w-6 h-6 text-purple-600 mt-1" />
+                    <div>
+                      <h4 className="text-black font-semibold mb-2">Entrega</h4>
+                      <p className="text-gray-600 text-sm">Recibirás notificaciones de cada paso del proceso</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Botones de acción */}
+            <div className="text-center space-y-4">
+              <Link href="/">
+                <Button className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-3">
+                  <Home className="w-5 h-5 mr-2" />
+                  Volver al Inicio
+                </Button>
+              </Link>
+              
+              <Link href="/contacto">
+                <Button variant="outline" className="border-2 border-yellow-200 text-yellow-600 hover:bg-yellow-50 px-8 py-3">
+                  <Mail className="w-5 h-5 mr-2" />
+                  Contactar Soporte
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (orderDetails?.status === "pending") {
+    return (
+      <div className="min-h-screen bg-white py-20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto text-center">
+            <div className="w-32 h-32 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+              <Clock className="w-12 h-12 text-yellow-600" />
+            </div>
+            <CardTitle className="text-3xl font-serif font-bold text-black">
+              Pago en Proceso
+            </CardTitle>
+            <p className="text-gray-600 text-xl mt-4 mb-8">
+              Tu pago está siendo procesado. Esto puede tomar unos minutos.
+            </p>
+            
+            <Link href="/checkout">
+              <Button className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-3">
+                <ArrowLeft className="w-5 h-5 mr-2" />
+                Volver al Checkout
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (orderDetails?.status === "rejected") {
+    return (
+      <div className="min-h-screen bg-white py-20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto text-center">
+            <div className="w-32 h-32 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+              <XCircle className="w-12 h-12 text-red-600" />
+            </div>
+            <CardTitle className="text-3xl font-serif font-bold text-black">
+              Pago Rechazado
+            </CardTitle>
+            <p className="text-gray-600 text-xl mt-4 mb-8">
+              Tu pago no pudo ser procesado. Por favor, intenta de nuevo.
+            </p>
+            
+            <Link href="/checkout">
+              <Button className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-3">
+                Intentar de Nuevo
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-white py-20">
+      <div className="container mx-auto px-4">
+        <div className="max-w-2xl mx-auto text-center">
+          <div className="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+            <Clock className="w-12 h-12 text-gray-600" />
+          </div>
+          <p className="text-black mt-4 text-lg">Cargando...</p>
+        </div>
+      </div>
+    </div>
   );
 }
