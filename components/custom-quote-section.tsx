@@ -70,7 +70,7 @@ Enviado desde Canastas Navideñas -
   return (
     <section
       id="cotizacion"
-      className="py-20 bg-elegant-black relative overflow-hidden"
+      className="py-20 bg-white relative overflow-hidden"
     >
       {/* Decorative elements */}
       <div className="absolute top-10 left-10 w-32 h-32 border border-gold-400/20 rounded-full animate-pulse bg-elegant-dark/50"></div>
@@ -84,7 +84,7 @@ Enviado desde Canastas Navideñas -
             <Sparkles className="w-4 h-4" />
             Servicio Personalizado
           </div>
-          <h2 className="text-4xl lg:text-5xl title-elegant text-elegant-white mb-6">
+          <h2 className="text-4xl lg:text-5xl title-elegant text-elegant-black mb-6">
             ¿Buscas algo <span className="text-gold-300">especial?</span>
           </h2>
           <p className="text-xl text-elegant-light max-w-3xl mx-auto font-light leading-relaxed">
