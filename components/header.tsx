@@ -22,6 +22,7 @@ export function Header() {
               ¡Envío GRATIS en compras superiores a $250! 🚚✨
             </span>
             
+            
           </div>
         </div>
       </div>
