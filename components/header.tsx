@@ -49,7 +49,7 @@ export function Header() {
               <Crown className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-inter font-bold text-black group-hover:text-yellow-600 transition-colors duration-300">
+              <h1 className="text-2xl font-patrick-hand font-bold text-black group-hover:text-yellow-600 transition-colors duration-300">
                 Canastas Navideñas
               </h1>
               <p className="text-sm text-gray-600 font-medium">REGALOS NAVIDEÑOS</p>
