@@ -21,6 +21,7 @@ export function Header() {
             <span className="text-sm font-medium">
               ¡Envío GRATIS en compras superiores a $250! 🚚✨
             </span>
+            
           </div>
         </div>
       </div>
