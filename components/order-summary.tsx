@@ -90,13 +90,13 @@ export function OrderSummary({ giftWrap, giftWrapPrice = 50 }: OrderSummaryProps
         <CardContent className="p-6 text-center">
           <Truck className="w-12 h-12 text-gold-500 mx-auto mb-4" />
           <h3 className="title-elegant font-semibold mb-3 text-elegant-black text-lg">
-            Envío Premium
+            Envío de Calidad
           </h3>
           <p className="text-elegant-gray font-medium leading-relaxed">
             {total >= 250 ? (
-              <>Envío <span className="text-gold-500 font-bold">GRATUITO</span> en 24-48 horas</>
+              <>Envío <span className="text-gold-500 font-bold">GRATUITO</span> en mismo dia del</>
             ) : (
-              <>Envío por <span className="text-gold-500 font-bold">$3</span> en 24-48 horas</>
+              <>Envío por <span className="text-gold-500 font-bold">$3</span> entregado en el mismo dia</>
             )}
             . Empaque de lujo incluido con tarjeta personalizada.
           </p>
