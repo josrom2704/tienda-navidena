@@ -27,7 +27,7 @@ export function Header() {
       </div>
 
       {/* Top bar con estrellas */}
-      <div className="bg-yellow-50 border-b border-yellow-200">
+      <div className="bg-yellow-50">
         <div className="container mx-auto px-4 py-2 flex justify-end">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center">
