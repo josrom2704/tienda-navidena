@@ -1,5 +1,4 @@
 // components/loading-skeleton.tsx
-import { Skeleton } from "@/components/ui/skeleton";
 
 export function ProductLoadingSkeleton() {
   return (
@@ -7,11 +6,11 @@ export function ProductLoadingSkeleton() {
       {[...Array(8)].map((_, i) => (
         <div key={i} className="animate-pulse">
           <div className="bg-white rounded-lg h-96 border border-yellow-200 shadow-md p-6">
-            <Skeleton className="h-48 w-full mb-4 rounded-lg" />
-            <Skeleton className="h-6 w-3/4 mb-2" />
-            <Skeleton className="h-4 w-full mb-2" />
-            <Skeleton className="h-4 w-2/3 mb-4" />
-            <Skeleton className="h-10 w-full rounded-lg" />
+            <div className="h-48 w-full mb-4 rounded-lg bg-gray-200"></div>
+            <div className="h-6 w-3/4 mb-2 bg-gray-200 rounded"></div>
+            <div className="h-4 w-full mb-2 bg-gray-200 rounded"></div>
+            <div className="h-4 w-2/3 mb-4 bg-gray-200 rounded"></div>
+            <div className="h-10 w-full rounded-lg bg-gray-200"></div>
           </div>
         </div>
       ))}
@@ -25,9 +24,9 @@ export function CategoryLoadingSkeleton() {
       {[...Array(8)].map((_, i) => (
         <div key={i} className="animate-pulse">
           <div className="bg-white rounded-xl h-32 border border-yellow-200 shadow-md p-6">
-            <Skeleton className="h-12 w-12 mx-auto mb-4 rounded-full" />
-            <Skeleton className="h-6 w-3/4 mx-auto mb-2" />
-            <Skeleton className="h-4 w-full mx-auto" />
+            <div className="h-12 w-12 mx-auto mb-4 rounded-full bg-gray-200"></div>
+            <div className="h-6 w-3/4 mx-auto mb-2 bg-gray-200 rounded"></div>
+            <div className="h-4 w-full mx-auto bg-gray-200 rounded"></div>
           </div>
         </div>
       ))}
