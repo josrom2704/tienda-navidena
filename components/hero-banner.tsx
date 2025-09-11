@@ -196,11 +196,11 @@ export function HeroBanner() {
                 
                 {/* Mini CTA discreto */}
                 <Link 
-                  href="#catalogo"
+                  href="#seleccion-diaria"
                   className="mini-cta text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors duration-300 relative group"
-                  aria-label="Ver ofertas exclusivas de Navidad"
+                  aria-label="Ver selección diaria de productos"
                 >
-                  🎁 Ver ofertas exclusivas
+                  🎁 Selección Diaria
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-yellow-500 group-hover:w-full transition-all duration-300"></span>
                 </Link>
               </div>

@@ -41,7 +41,7 @@ export function DailySelection() {
   }
 
   return (
-    <section className="py-20 bg-gray-50">
+    <section id="seleccion-diaria" className="py-20 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16 fade-in-up">
           <div className="inline-flex items-center gap-3 bg-yellow-400/10 border border-yellow-400/20 text-yellow-500 px-6 py-3 rounded-full text-sm font-medium mb-6 backdrop-blur-sm">
