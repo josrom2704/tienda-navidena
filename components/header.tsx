@@ -58,6 +58,12 @@ export function Header() {
               Catálogo
             </Link>
             <Link 
+              href="/categorias" 
+              className="text-black hover:text-yellow-600 font-medium transition-colors duration-300"
+            >
+              Categorías
+            </Link>
+            <Link 
               href="/quienes-somos" 
               className="text-black hover:text-yellow-600 font-medium transition-colors duration-300"
             >
@@ -115,6 +121,13 @@ export function Header() {
               onClick={() => setIsMenuOpen(false)}
             >
               Catálogo
+            </Link>
+            <Link 
+              href="/categorias" 
+              className="block text-black hover:text-yellow-600 font-medium py-2 transition-colors duration-300"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Categorías
             </Link>
             <Link 
               href="/quienes-somos" 

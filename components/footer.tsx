@@ -50,6 +50,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/categorias" className="text-gray-600 hover:text-yellow-600 transition-colors">
+                  Categorías
+                </Link>
+              </li>
+              <li>
                 <Link href="/quienes-somos" className="text-gray-600 hover:text-yellow-600 transition-colors">
                   Quiénes Somos
                 </Link>
