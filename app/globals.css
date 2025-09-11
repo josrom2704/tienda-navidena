@@ -194,7 +194,7 @@
 /* Responsive para mobile */
 @media (max-width: 640px) {
   .ornament-container {
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
   }
   
   .mini-cta {
@@ -202,6 +202,15 @@
     text-align: center;
     display: block;
   }
+}
+
+/* Ajustes para ornamento más pequeño */
+.ornament-container svg {
+  transition: transform 0.3s ease;
+}
+
+.ornament-container:hover svg {
+  transform: scale(1.1);
 }
 
 /* Solo clases básicas que funcionen */

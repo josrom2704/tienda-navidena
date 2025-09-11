@@ -155,20 +155,21 @@ export function HeroBanner() {
       <div className="absolute top-1/2 left-10 w-2 h-2 bg-yellow-400 rounded-full animate-ping" style={{ zIndex: 3 }}></div>
       <div className="absolute top-1/3 right-32 w-1 h-1 bg-yellow-400 rounded-full animate-ping delay-500" style={{ zIndex: 3 }}></div>
 
-      <div className="relative container mx-auto px-4 py-20" style={{ zIndex: 4 }}>
+      <div className="relative container mx-auto px-4 py-12" style={{ zIndex: 4 }}>
         <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <div className="space-y-10 fade-in-up">
-            <div className="space-y-6">
-              {/* Ornamento SVG dorado */}
-              <div className="flex justify-center mb-4">
+          <div className="space-y-8 fade-in-up">
+            <div className="space-y-4">
+              {/* Sección compacta con ornamento, Navidades 2025 y CTA */}
+              <div className="flex items-center justify-center gap-4 flex-col sm:flex-row">
+                {/* Ornamento SVG dorado - más pequeño */}
                 <div 
                   className="ornament-container hover:ornament-hover transition-all duration-300 cursor-pointer"
                   role="img"
                   aria-label="Ornamento navideño dorado"
                 >
                   <svg 
-                    width="48" 
-                    height="48" 
+                    width="32" 
+                    height="32" 
                     viewBox="0 0 24 24" 
                     fill="none" 
                     xmlns="http://www.w3.org/2000/svg"
@@ -184,12 +185,11 @@ export function HeroBanner() {
                     />
                   </svg>
                 </div>
-              </div>
 
-              <div className="flex items-center justify-center gap-3 flex-col sm:flex-row">
-                <div className="flex items-center gap-3">
-                  <Crown className="w-6 h-6 text-yellow-500" />
-                  <span className="text-yellow-500 font-light uppercase tracking-[0.2em] text-sm">
+                {/* Navidades 2025 */}
+                <div className="flex items-center gap-2">
+                  <Crown className="w-5 h-5 text-yellow-500" />
+                  <span className="text-yellow-500 font-light uppercase tracking-[0.15em] text-sm">
                     Navidades 2025
                   </span>
                 </div>
