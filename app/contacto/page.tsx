@@ -132,8 +132,8 @@ export default function ContactoPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">Teléfono</h3>
-                  <p className="text-gray-600">+1 (555) 123-4567</p>
-                  <p className="text-sm text-gray-500">Lunes a Viernes: 9:00 AM - 6:00 PM</p>
+                  <p className="text-gray-600">+503 7014-3259</p>
+                  <p className="text-sm text-gray-500">Lunes a Viernes: 8:00 AM - 5:00 PM</p>
                 </div>
               </div>
 
@@ -143,7 +143,7 @@ export default function ContactoPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">Correo Electrónico</h3>
-                  <p className="text-gray-600">info@canastaspremium.com</p>
+                  <p className="text-gray-600">contacto@tiendaderegaloselsalvador.com</p>
                   <p className="text-sm text-gray-500">Respuesta en 24 horas</p>
                 </div>
               </div>
@@ -165,9 +165,9 @@ export default function ContactoPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">Horarios de Atención</h3>
-                  <p className="text-gray-600">Lunes - Viernes: 9:00 AM - 6:00 PM</p>
-                  <p className="text-gray-600">Sábados: 10:00 AM - 4:00 PM</p>
-                  <p className="text-gray-600">Domingos: Cerrado</p>
+                  <p className="text-gray-600">Lunes - Viernes: 8:00 AM - 5:00 PM</p>
+                  <p className="text-gray-600">Sábados: 8:00 AM - 4:00 PM</p>
+                  <p className="text-gray-600">Domingos: 8:00 AM - 12:00 PM</p>
                 </div>
               </div>
             </CardContent>
