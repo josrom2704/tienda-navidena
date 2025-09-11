@@ -54,8 +54,8 @@ export function OrderConfirmation() {
                   <div className="flex items-start gap-4 p-4 bg-purple-50 border border-purple-200 rounded-lg">
                     <Truck className="w-6 h-6 text-purple-600 mt-1" />
                     <div>
-                      <p className="text-black font-medium">Envío premium</p>
-                      <p className="text-gray-600 text-sm">Envío en 24-48 horas con seguimiento</p>
+                      <p className="text-black font-medium">Envío de Calidad</p>
+                      <p className="text-gray-600 text-sm">Envío con seguimiento</p>
                     </div>
                   </div>
                 </div>
