@@ -2,29 +2,162 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Gift, Star, Crown, Sparkles } from "lucide-react";
 import Image from "next/image";
+import { useEffect, useRef } from "react";
 
 export function HeroBanner() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Configuración de partículas
+    const isMobile = window.innerWidth < 768;
+    const particleCount = isMobile ? 15 : 40;
+    const particles: Array<{
+      x: number;
+      y: number;
+      size: number;
+      speed: number;
+      opacity: number;
+      angle: number;
+    }> = [];
+
+    // Crear partículas
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 3 + 1,
+        speed: Math.random() * 2 + 0.5,
+        opacity: Math.random() * 0.6 + 0.2,
+        angle: Math.random() * Math.PI * 2,
+      });
+    }
+
+    // Verificar preferencia de movimiento reducido
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function animate() {
+      if (prefersReducedMotion || !ctx || !canvas) return;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      particles.forEach((particle) => {
+        // Actualizar posición
+        particle.y += particle.speed;
+        particle.x += Math.sin(particle.angle) * 0.5;
+        particle.angle += 0.02;
+
+        // Reiniciar si sale de la pantalla
+        if (particle.y > canvas.height) {
+          particle.y = -10;
+          particle.x = Math.random() * canvas.width;
+        }
+        if (particle.x < 0 || particle.x > canvas.width) {
+          particle.x = Math.random() * canvas.width;
+        }
+
+        // Dibujar partícula
+        ctx.save();
+        ctx.globalAlpha = particle.opacity;
+        ctx.fillStyle = '#C7A44B';
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    // Configurar canvas
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    
+    // Iniciar animación
+    animate();
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+    };
+  }, []);
+
   return (
     <section className="relative overflow-hidden bg-white min-h-screen flex items-center">
+      {/* Canvas para partículas */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 pointer-events-none"
+        style={{ zIndex: 1 }}
+      />
+
       {/* Background texture */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-gray-100 opacity-90"></div>
-      <div className="absolute inset-0 bg-[url('/placeholder.svg?height=1080&width=1920')] bg-cover bg-center opacity-3"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-gray-100 opacity-90" style={{ zIndex: 2 }}></div>
+      <div className="absolute inset-0 bg-[url('/placeholder.svg?height=1080&width=1920')] bg-cover bg-center opacity-3" style={{ zIndex: 2 }}></div>
 
       {/* Decorative elements */}
-      <div className="absolute top-20 left-20 w-32 h-32 border border-yellow-400/20 rounded-full animate-pulse bg-white/50"></div>
-      <div className="absolute bottom-20 right-20 w-24 h-24 border border-yellow-400/30 rounded-full animate-pulse delay-1000 bg-white/50"></div>
-      <div className="absolute top-1/2 left-10 w-2 h-2 bg-yellow-400 rounded-full animate-ping"></div>
-      <div className="absolute top-1/3 right-32 w-1 h-1 bg-yellow-400 rounded-full animate-ping delay-500"></div>
+      <div className="absolute top-20 left-20 w-32 h-32 border border-yellow-400/20 rounded-full animate-pulse bg-white/50" style={{ zIndex: 3 }}></div>
+      <div className="absolute bottom-20 right-20 w-24 h-24 border border-yellow-400/30 rounded-full animate-pulse delay-1000 bg-white/50" style={{ zIndex: 3 }}></div>
+      <div className="absolute top-1/2 left-10 w-2 h-2 bg-yellow-400 rounded-full animate-ping" style={{ zIndex: 3 }}></div>
+      <div className="absolute top-1/3 right-32 w-1 h-1 bg-yellow-400 rounded-full animate-ping delay-500" style={{ zIndex: 3 }}></div>
 
-      <div className="relative container mx-auto px-4 py-20">
+      <div className="relative container mx-auto px-4 py-20" style={{ zIndex: 4 }}>
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-10 fade-in-up">
             <div className="space-y-6">
-              <div className="flex items-center gap-3">
-                <Crown className="w-6 h-6 text-yellow-500" />
-                <span className="text-yellow-500 font-light uppercase tracking-[0.2em] text-sm">
-                  Navidades 2025
-                </span>
+              {/* Ornamento SVG dorado */}
+              <div className="flex justify-center mb-4">
+                <div 
+                  className="ornament-container hover:ornament-hover transition-all duration-300 cursor-pointer"
+                  role="img"
+                  aria-label="Ornamento navideño dorado"
+                >
+                  <svg 
+                    width="48" 
+                    height="48" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="ornament-svg"
+                  >
+                    <path 
+                      d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" 
+                      fill="#C7A44B"
+                    />
+                    <path 
+                      d="M12 18L13.09 20.26L20 21L13.09 21.74L12 24L10.91 21.74L4 21L10.91 20.26L12 18Z" 
+                      fill="#C7A44B"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-center gap-3 flex-col sm:flex-row">
+                <div className="flex items-center gap-3">
+                  <Crown className="w-6 h-6 text-yellow-500" />
+                  <span className="text-yellow-500 font-light uppercase tracking-[0.2em] text-sm">
+                    Navidades 2025
+                  </span>
+                </div>
+                
+                {/* Mini CTA discreto */}
+                <Link 
+                  href="#catalogo"
+                  className="mini-cta text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors duration-300 relative group"
+                  aria-label="Ver ofertas exclusivas de Navidad"
+                >
+                  🎁 Ver ofertas exclusivas
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-yellow-500 group-hover:w-full transition-all duration-300"></span>
+                </Link>
               </div>
 
               <h1 className="text-5xl lg:text-7xl font-serif leading-tight">

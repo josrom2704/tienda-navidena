@@ -133,6 +133,66 @@
   font-optical-sizing: auto;
 }
 
+/* Variables CSS para el hero */
+:root {
+  --gold: #C7A44B;
+  --gold-light: #D4B85A;
+  --gold-dark: #B8943C;
+  --particle-count-desktop: 40;
+  --particle-count-mobile: 15;
+  --particle-speed-min: 0.5;
+  --particle-speed-max: 2.5;
+  --particle-opacity-min: 0.2;
+  --particle-opacity-max: 0.8;
+  --particle-size-min: 1;
+  --particle-size-max: 4;
+}
+
+/* Estilos para el ornamento */
+.ornament-container {
+  display: inline-block;
+  transform-origin: center;
+}
+
+.ornament-hover {
+  transform: rotate(3deg) scale(1.02);
+}
+
+.ornament-svg {
+  filter: drop-shadow(0 2px 4px rgba(199, 164, 75, 0.3));
+  transition: all 0.3s ease;
+}
+
+.ornament-container:hover .ornament-svg {
+  filter: drop-shadow(0 4px 8px rgba(199, 164, 75, 0.5));
+}
+
+/* Estilos para el mini CTA */
+.mini-cta {
+  position: relative;
+  text-decoration: none;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+}
+
+.mini-cta:hover {
+  color: var(--gold);
+}
+
+/* Responsive para mobile */
+@media (max-width: 640px) {
+  .ornament-container {
+    margin-bottom: 1rem;
+  }
+  
+  .mini-cta {
+    margin-top: 0.5rem;
+    text-align: center;
+    display: block;
+  }
+}
+
 /* Solo clases básicas que funcionen */
 .elegant-button {
   @apply bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1;
