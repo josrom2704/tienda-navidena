@@ -40,11 +40,6 @@ const nextConfig = {
       },
     ];
   },
-  // ✅ OPTIMIZACIÓN: Configuración experimental
-  experimental: {
-    optimizeCss: true,
-    optimizePackageImports: ['lucide-react'],
-  },
 }
 
 export default nextConfig
