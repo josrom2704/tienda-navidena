@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Filter, Grid3X3, List, Star, Package, Truck, Shield } from "lucide-react";
 import { objectIdToNumber } from "@/lib/id";
+import { ProductLoadingSkeleton } from "@/components/loading-skeleton";
 
 type Producto = {
   _id: string;
