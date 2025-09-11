@@ -35,6 +35,7 @@ const patrickHand = Patrick_Hand({
   subsets: ["latin"],
   weight: ["400"],
   variable: "--font-patrick-hand",
+  display: "swap",
 })
 
 export const metadata: Metadata = {
