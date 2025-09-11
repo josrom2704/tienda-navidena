@@ -127,6 +127,12 @@
   font-family: var(--font-patrick-hand), cursive;
 }
 
+/* Definición específica para Cinzel */
+.font-cinzel {
+  font-family: var(--font-cinzel), serif;
+  font-optical-sizing: auto;
+}
+
 /* Solo clases básicas que funcionen */
 .elegant-button {
   @apply bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1;

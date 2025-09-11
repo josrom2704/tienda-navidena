@@ -57,7 +57,7 @@ export function Header() {
           </Link>
 
           {/* Navegación desktop */}
-          <nav className="hidden md:flex items-center gap-8 font-cormorant">
+          <nav className="hidden md:flex items-center gap-8 font-cinzel">
             <Link 
               href="/" 
               className="text-black hover:text-yellow-600 font-medium transition-colors duration-300"
@@ -114,7 +114,7 @@ export function Header() {
       {/* Menú móvil */}
       {isMenuOpen && (
         <div className="md:hidden bg-white border-t border-yellow-200 shadow-lg">
-          <nav className="container mx-auto px-4 py-4 space-y-4 font-cormorant">
+          <nav className="container mx-auto px-4 py-4 space-y-4 font-cinzel">
             <Link 
               href="/" 
               className="block text-black hover:text-yellow-600 font-medium py-2 transition-colors duration-300"

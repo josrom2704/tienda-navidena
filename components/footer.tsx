@@ -68,15 +68,15 @@ export function Footer() {
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Phone className="w-4 h-4 text-yellow-500" />
-                <span className="text-gray-600 text-sm">+57 300 123 4567</span>
+                <span className="text-gray-600 text-sm">+503 7014-3259</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="w-4 h-4 text-yellow-500" />
-                <span className="text-gray-600 text-sm">info@canastasnavidenas.com</span>
+                <span className="text-gray-600 text-sm">contacto@tiendaderegaloselsalvador.com</span>
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin className="w-4 h-4 text-yellow-500" />
-                <span className="text-gray-600 text-sm">Bogotá, Colombia</span>
+                <span className="text-gray-600 text-sm">San Salvador, El Salvador</span>
               </div>
             </div>
           </div>
