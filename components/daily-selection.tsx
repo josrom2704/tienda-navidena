@@ -81,7 +81,7 @@ export function DailySelection() {
       ref={sectionRef}
       id="seleccion-diaria" 
       className={`py-20 bg-gray-50 transition-all duration-500 ${
-        isVisible ? 'section-fade-in' : 'opacity-0'
+        isVisible ? 'section-fade-in' : ''
       } ${isHighlighted ? 'section-highlight' : ''}`}
     >
       <div className="container mx-auto px-4">
