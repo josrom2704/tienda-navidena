@@ -1,15 +1,17 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from "react";
 import { useApi } from "@/hooks/useApi";
 import { useDominio } from "@/hooks/useDominio";
-import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Filter, Grid3X3, List, Star, Package, Truck, Shield } from "lucide-react";
 import { objectIdToNumber } from "@/lib/id";
 import { ProductLoadingSkeleton } from "@/components/loading-skeleton";
+
+// ✅ OPTIMIZACIÓN: Lazy loading de componentes pesados
+const ProductCard = lazy(() => import("@/components/product-card").then(module => ({ default: module.ProductCard })));
 
 type Producto = {
   _id: string;
@@ -266,18 +268,19 @@ export default function CatalogoPage() {
               : "grid-cols-1"
           }`}>
             {filteredProducts.map((product) => (
-            <ProductCard
-                key={product._id}
-              product={{
-                  id: objectIdToNumber(product._id),
-                  name: product.nombre,
-                  description: product.descripcion ?? "",
-                  price: typeof product.precio === 'string' ? parseFloat(product.precio) : product.precio,
-                  image: product.imagen || "/placeholder.svg?height=300&width=300",
-                  category: product.categoria,
-              }}
-            />
-          ))}
+              <Suspense key={product._id} fallback={<div className="h-96 bg-gray-100 animate-pulse rounded-lg"></div>}>
+                <ProductCard
+                  product={{
+                    id: objectIdToNumber(product._id),
+                    name: product.nombre,
+                    description: product.descripcion ?? "",
+                    price: typeof product.precio === 'string' ? parseFloat(product.precio) : product.precio,
+                    image: product.imagen || "/placeholder.svg?height=300&width=300",
+                    category: product.categoria,
+                  }}
+                />
+              </Suspense>
+            ))}
         </div>
         ) : (
           <div className="text-center py-16">

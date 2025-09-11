@@ -4,7 +4,7 @@ import { getBackendUrl, BACKEND_CONFIG } from '@/lib/backend-config';
 
 // ✅ CACHE SIMPLE PARA MEJORAR RENDIMIENTO
 const cache = new Map<string, { data: any; timestamp: number }>();
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
+const CACHE_DURATION = 10 * 60 * 1000; // ✅ AUMENTADO: 10 minutos para mejor performance
 
 function getCachedData(key: string) {
   const cached = cache.get(key);
@@ -16,6 +16,12 @@ function getCachedData(key: string) {
 
 function setCachedData(key: string, data: any) {
   cache.set(key, { data, timestamp: Date.now() });
+  
+  // ✅ OPTIMIZACIÓN: Limitar tamaño del cache
+  if (cache.size > 50) {
+    const firstKey = cache.keys().next().value;
+    cache.delete(firstKey);
+  }
 }
 
 // ✅ Tipos para la API

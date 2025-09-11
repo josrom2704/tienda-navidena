@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Heart, ShoppingCart, Star, Eye } from "lucide-react";
 import { useCart } from "./cart-provider";
+import Image from "next/image";
 
 interface Product {
   id: number;
