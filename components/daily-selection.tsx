@@ -2,14 +2,50 @@
 
 import { ProductCard } from "@/components/product-card";
 import { useDailyRecommendations } from "@/hooks/use-daily-recommendations";
+import { useEffect, useRef, useState } from "react";
 
 export function DailySelection() {
   const { dailyProducts, isLoading, error, refreshRecommendations, lastUpdated } = useDailyRecommendations();
+  const [isVisible, setIsVisible] = useState(false);
+  const [isHighlighted, setIsHighlighted] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
 
   // Función para recargar productos (útil para testing)
   const handleRefresh = () => {
     refreshRecommendations();
   };
+
+  // Intersection Observer para detectar cuando la sección es visible
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          // Agregar highlight temporal cuando se hace scroll desde el hero
+          const url = window.location.hash;
+          if (url === '#seleccion-diaria') {
+            setIsHighlighted(true);
+            setTimeout(() => setIsHighlighted(false), 3000);
+            // Limpiar el hash después de la animación
+            setTimeout(() => {
+              window.history.replaceState(null, '', window.location.pathname);
+            }, 1000);
+          }
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
 
   if (isLoading) {
     return (
@@ -41,7 +77,13 @@ export function DailySelection() {
   }
 
   return (
-    <section id="seleccion-diaria" className="py-20 bg-gray-50">
+    <section 
+      ref={sectionRef}
+      id="seleccion-diaria" 
+      className={`py-20 bg-gray-50 transition-all duration-500 ${
+        isVisible ? 'section-fade-in' : 'opacity-0'
+      } ${isHighlighted ? 'section-highlight' : ''}`}
+    >
       <div className="container mx-auto px-4">
         <div className="text-center mb-16 fade-in-up">
           <div className="inline-flex items-center gap-3 bg-yellow-400/10 border border-yellow-400/20 text-yellow-500 px-6 py-3 rounded-full text-sm font-medium mb-6 backdrop-blur-sm">

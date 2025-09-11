@@ -197,7 +197,7 @@ export function HeroBanner() {
                 {/* Mini CTA discreto */}
                 <Link 
                   href="#seleccion-diaria"
-                  className="mini-cta text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors duration-300 relative group"
+                  className="mini-cta text-sm font-medium text-gray-700 hover:text-gray-900 transition-all duration-300 relative group hover:scale-105"
                   aria-label="Ver selección diaria de productos"
                 >
                   🎁 Selección Diaria

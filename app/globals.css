@@ -148,6 +148,44 @@
   --particle-size-max: 4;
 }
 
+/* Scroll suave global */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Animación para la sección de selección diaria */
+@keyframes slideInFromTop {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(199, 164, 75, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(199, 164, 75, 0);
+  }
+}
+
+/* Clase para animación de entrada */
+.section-fade-in {
+  animation: slideInFromTop 0.8s ease-out;
+}
+
+/* Efecto de pulso dorado cuando se hace scroll */
+.section-highlight {
+  animation: pulseGlow 2s infinite;
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+}
+
 /* Estilos para el ornamento */
 .ornament-container {
   display: inline-block;
