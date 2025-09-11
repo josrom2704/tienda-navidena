@@ -83,7 +83,7 @@ export default function ContactoPage() {
                   name="telefono"
                   value={formData.telefono}
                   onChange={handleChange}
-                  placeholder="+1 (555) 123-4567"
+                  placeholder="+503 7065-3259"
                 />
               </div>
 
