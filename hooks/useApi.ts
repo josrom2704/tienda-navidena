@@ -1,6 +1,22 @@
 // /hooks/useApi.ts
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { getBackendUrl, BACKEND_CONFIG } from '@/lib/backend-config';
+
+// ✅ CACHE SIMPLE PARA MEJORAR RENDIMIENTO
+const cache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
+
+function getCachedData(key: string) {
+  const cached = cache.get(key);
+  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+    return cached.data;
+  }
+  return null;
+}
+
+function setCachedData(key: string, data: any) {
+  cache.set(key, { data, timestamp: Date.now() });
+}
 
 // ✅ Tipos para la API
 export interface Producto {
@@ -37,9 +53,15 @@ export function useApi() {
     return res.json();
   }, [authHeaders]);
 
-  // ✅ Categorías por dominio - USANDO LO QUE SÍ FUNCIONA
+  // ✅ Categorías por dominio - OPTIMIZADO CON CACHE
   const getCategoriasByDominio = useCallback(async (dominio: string): Promise<string[]> => {
     try {
+      const cacheKey = 'categorias';
+      const cachedData = getCachedData(cacheKey);
+      if (cachedData) {
+        return cachedData;
+      }
+
       // ✅ SOLUCIÓN DEFINITIVA: Usar floristeriaId que sabemos que funciona
       const floristeriaId = '68a125df2097950ec3ff19fa';
       const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.CATEGORIAS)}?floristeriaId=${floristeriaId}`;
@@ -51,7 +73,11 @@ export function useApi() {
       }
       
       const data = await response.json();
-      return Array.isArray(data) ? data : [];
+      const result = Array.isArray(data) ? data : [];
+      
+      // ✅ GUARDAR EN CACHE
+      setCachedData(cacheKey, result);
+      return result;
       
     } catch (error) {
       console.error("❌ [getCategoriasByDominio] Error:", error);
@@ -59,7 +85,7 @@ export function useApi() {
     }
   }, []);
 
-  // ✅ Productos por categoría - USANDO LO QUE SÍ FUNCIONA
+  // ✅ Productos por categoría - OPTIMIZADO CON CACHE
   const getProductosByCategoria = useCallback(async (dominio: string, categoria: string): Promise<Producto[]> => {
     try {
       // ✅ CONVERTIR SLUG A CATEGORÍA REAL
@@ -84,6 +110,13 @@ export function useApi() {
         categoriaReal = slugToCategoria[categoria];
       }
       
+      // ✅ CACHE POR CATEGORÍA
+      const cacheKey = `productos-${categoriaReal}`;
+      const cachedData = getCachedData(cacheKey);
+      if (cachedData) {
+        return cachedData;
+      }
+      
       // ✅ SOLUCIÓN DEFINITIVA: Usar floristeriaId que sabemos que funciona
       const floristeriaId = '68a125df2097950ec3ff19fa';
       const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.PRODUCTOS)}?floristeriaId=${floristeriaId}&categoria=${encodeURIComponent(categoriaReal)}`;
@@ -95,7 +128,11 @@ export function useApi() {
       }
       
       const data = await response.json();
-      return Array.isArray(data) ? data : [];
+      const result = Array.isArray(data) ? data : [];
+      
+      // ✅ GUARDAR EN CACHE
+      setCachedData(cacheKey, result);
+      return result;
       
     } catch (error) {
       console.error("❌ [getProductosByCategoria] Error:", error);
@@ -103,9 +140,16 @@ export function useApi() {
     }
   }, []);
 
-  // ✅ Todos los productos - USANDO LO QUE SÍ FUNCIONA
+  // ✅ Todos los productos - OPTIMIZADO CON CACHE
   const getProductosAll = useCallback(async (dominio: string): Promise<Producto[]> => {
     try {
+      // ✅ CACHE PARA TODOS LOS PRODUCTOS
+      const cacheKey = 'productos-all';
+      const cachedData = getCachedData(cacheKey);
+      if (cachedData) {
+        return cachedData;
+      }
+
       // ✅ SOLUCIÓN DEFINITIVA: Usar floristeriaId que sabemos que funciona
       const floristeriaId = '68a125df2097950ec3ff19fa';
       const url = `${getBackendUrl(BACKEND_CONFIG.ENDPOINTS.PRODUCTOS)}?floristeriaId=${floristeriaId}`;
@@ -117,12 +161,21 @@ export function useApi() {
       }
       
       const data = await response.json();
-      return Array.isArray(data) ? data : [];
+      const result = Array.isArray(data) ? data : [];
+      
+      // ✅ GUARDAR EN CACHE
+      setCachedData(cacheKey, result);
+      return result;
       
     } catch (error) {
       console.error("❌ [getProductosAll] Error:", error);
       return [];
     }
+  }, []);
+
+  // ✅ FUNCIÓN PARA LIMPIAR CACHE (útil para desarrollo)
+  const clearCache = useCallback(() => {
+    cache.clear();
   }, []);
 
   return {
@@ -131,5 +184,6 @@ export function useApi() {
     getCategoriasByDominio,
     getProductosByCategoria,
     getProductosAll,
+    clearCache, // ✅ NUEVA: Función para limpiar cache
   };
 };

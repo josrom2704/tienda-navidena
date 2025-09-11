@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useApi } from "@/hooks/useApi";
 import { useDominio } from "@/hooks/useDominio";
 import { ProductCard } from "@/components/product-card";
@@ -22,7 +22,6 @@ type Producto = {
 
 export default function CatalogoPage() {
   const [products, setProducts] = useState<Producto[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Producto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,28 +33,29 @@ export default function CatalogoPage() {
   const dominio = useDominio();
   const { getProductosAll } = useApi();
 
-  useEffect(() => {
+  // ✅ OPTIMIZACIÓN: Memoizar la función de carga
+  const fetchProducts = useCallback(async () => {
     if (!dominio) return;
 
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        const data = await getProductosAll(dominio);
-        setProducts(data);
-        setFilteredProducts(data);
-        setError(null);
-      } catch (err) {
-        setError('Error al cargar productos');
-        console.error('Error fetching products:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
+    try {
+      setLoading(true);
+      const data = await getProductosAll(dominio);
+      setProducts(data);
+      setError(null);
+    } catch (err) {
+      setError('Error al cargar productos');
+      console.error('Error fetching products:', err);
+    } finally {
+      setLoading(false);
+    }
   }, [dominio, getProductosAll]);
 
   useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  // ✅ OPTIMIZACIÓN: Memoizar el filtrado de productos
+  const filteredProducts = useMemo(() => {
     let filtered = products;
 
     // Filtro por búsqueda
@@ -93,10 +93,14 @@ export default function CatalogoPage() {
       }
     });
 
-    setFilteredProducts(filtered);
+    return filtered;
   }, [products, searchTerm, selectedCategory, sortBy, priceRange]);
 
-  const categories = Array.from(new Set(products.map(p => p.categoria)));
+  // ✅ OPTIMIZACIÓN: Memoizar las categorías
+  const categories = useMemo(() => 
+    Array.from(new Set(products.map(p => p.categoria))), 
+    [products]
+  );
 
   if (loading) {
     return (
@@ -111,13 +115,7 @@ export default function CatalogoPage() {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="animate-pulse">
-                <div className="bg-white rounded-lg h-96 border border-yellow-200 shadow-md"></div>
-              </div>
-            ))}
-          </div>
+          <ProductLoadingSkeleton />
         </div>
       </div>
     );
@@ -162,8 +160,8 @@ export default function CatalogoPage() {
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Descubre nuestra exclusiva colección de productos navideños, canastas de lujo y regalos premium
-          </p>
-        </div>
+        </p>
+      </div>
 
         {/* Filtros y controles */}
         <div className="bg-white border-2 border-yellow-200 rounded-xl p-6 mb-12 shadow-lg">
@@ -267,19 +265,19 @@ export default function CatalogoPage() {
               : "grid-cols-1"
           }`}>
             {filteredProducts.map((product) => (
-              <ProductCard
+            <ProductCard
                 key={product._id}
-                product={{
+              product={{
                   id: objectIdToNumber(product._id),
                   name: product.nombre,
                   description: product.descripcion ?? "",
                   price: typeof product.precio === 'string' ? parseFloat(product.precio) : product.precio,
                   image: product.imagen || "/placeholder.svg?height=300&width=300",
                   category: product.categoria,
-                }}
-              />
-            ))}
-          </div>
+              }}
+            />
+          ))}
+        </div>
         ) : (
           <div className="text-center py-16">
             <div className="text-yellow-500 text-6xl mb-4">🔍</div>
@@ -298,8 +296,8 @@ export default function CatalogoPage() {
             >
               Limpiar Filtros
             </Button>
-          </div>
-        )}
+        </div>
+      )}
 
         {/* Información adicional */}
         <div className="mt-20 grid md:grid-cols-3 gap-8">
