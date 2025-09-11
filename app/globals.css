@@ -152,6 +152,7 @@
 .ornament-container {
   display: inline-block;
   transform-origin: center;
+  animation: gentleGlow 2s ease-in-out infinite alternate;
 }
 
 .ornament-hover {
@@ -159,12 +160,22 @@
 }
 
 .ornament-svg {
-  filter: drop-shadow(0 2px 4px rgba(199, 164, 75, 0.3));
+  filter: drop-shadow(0 2px 4px rgba(199, 164, 75, 0.4)) drop-shadow(0 0 8px rgba(199, 164, 75, 0.6));
   transition: all 0.3s ease;
 }
 
 .ornament-container:hover .ornament-svg {
-  filter: drop-shadow(0 4px 8px rgba(199, 164, 75, 0.5));
+  filter: drop-shadow(0 4px 8px rgba(199, 164, 75, 0.6)) drop-shadow(0 0 16px rgba(199, 164, 75, 0.8));
+}
+
+/* Animación de brillo suave */
+@keyframes gentleGlow {
+  0% {
+    filter: drop-shadow(0 2px 4px rgba(199, 164, 75, 0.4)) drop-shadow(0 0 8px rgba(199, 164, 75, 0.4));
+  }
+  100% {
+    filter: drop-shadow(0 2px 4px rgba(199, 164, 75, 0.6)) drop-shadow(0 0 12px rgba(199, 164, 75, 0.8));
+  }
 }
 
 /* Estilos para el mini CTA */

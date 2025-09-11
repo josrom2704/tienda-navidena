@@ -14,6 +14,11 @@ export function HeroBanner() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Verificar preferencia de movimiento reducido
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    if (prefersReducedMotion) return;
+
     // Configuración de partículas
     const isMobile = window.innerWidth < 768;
     const particleCount = isMobile ? 15 : 40;
@@ -24,61 +29,98 @@ export function HeroBanner() {
       speed: number;
       opacity: number;
       angle: number;
+      twinkle: number;
     }> = [];
 
-    // Crear partículas
+    // Configurar canvas
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      
+      // Recrear partículas después del resize
+      particles.length = 0;
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 4 + 2,
+          speed: Math.random() * 3 + 1,
+          opacity: Math.random() * 0.8 + 0.3,
+          angle: Math.random() * Math.PI * 2,
+          twinkle: Math.random() * Math.PI * 2,
+        });
+      }
+    };
+
+    // Crear partículas iniciales
     for (let i = 0; i < particleCount; i++) {
       particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        size: Math.random() * 3 + 1,
-        speed: Math.random() * 2 + 0.5,
-        opacity: Math.random() * 0.6 + 0.2,
+        x: Math.random() * (canvas.width || window.innerWidth),
+        y: Math.random() * (canvas.height || window.innerHeight),
+        size: Math.random() * 4 + 2,
+        speed: Math.random() * 3 + 1,
+        opacity: Math.random() * 0.8 + 0.3,
         angle: Math.random() * Math.PI * 2,
+        twinkle: Math.random() * Math.PI * 2,
       });
     }
 
-    // Verificar preferencia de movimiento reducido
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let animationId: number;
 
     function animate() {
-      if (prefersReducedMotion || !ctx || !canvas) return;
+      if (!ctx || !canvas) return;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       particles.forEach((particle) => {
         // Actualizar posición
         particle.y += particle.speed;
-        particle.x += Math.sin(particle.angle) * 0.5;
-        particle.angle += 0.02;
+        particle.x += Math.sin(particle.angle) * 0.8;
+        particle.angle += 0.03;
+        particle.twinkle += 0.1;
+
+        // Efecto de parpadeo
+        const twinkleOpacity = (Math.sin(particle.twinkle) + 1) * 0.3 + 0.4;
+        particle.opacity = Math.min(twinkleOpacity, 0.9);
 
         // Reiniciar si sale de la pantalla
-        if (particle.y > canvas.height) {
+        if (particle.y > canvas.height + 10) {
           particle.y = -10;
           particle.x = Math.random() * canvas.width;
         }
-        if (particle.x < 0 || particle.x > canvas.width) {
+        if (particle.x < -10 || particle.x > canvas.width + 10) {
           particle.x = Math.random() * canvas.width;
         }
 
-        // Dibujar partícula
+        // Dibujar partícula con gradiente
         ctx.save();
         ctx.globalAlpha = particle.opacity;
+        
+        // Crear gradiente radial
+        const gradient = ctx.createRadialGradient(
+          particle.x, particle.y, 0,
+          particle.x, particle.y, particle.size * 2
+        );
+        gradient.addColorStop(0, '#FFD700');
+        gradient.addColorStop(0.5, '#C7A44B');
+        gradient.addColorStop(1, 'transparent');
+        
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.size * 2, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Dibujar punto central
         ctx.fillStyle = '#C7A44B';
         ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        ctx.arc(particle.x, particle.y, particle.size * 0.5, 0, Math.PI * 2);
         ctx.fill();
+        
         ctx.restore();
       });
 
-      requestAnimationFrame(animate);
+      animationId = requestAnimationFrame(animate);
     }
-
-    // Configurar canvas
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
 
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
@@ -88,6 +130,9 @@ export function HeroBanner() {
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
     };
   }, []);
 
@@ -97,7 +142,7 @@ export function HeroBanner() {
       <canvas
         ref={canvasRef}
         className="absolute inset-0 pointer-events-none"
-        style={{ zIndex: 1 }}
+        style={{ zIndex: 10 }}
       />
 
       {/* Background texture */}
