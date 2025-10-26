@@ -20,7 +20,9 @@ function setCachedData(key: string, data: any) {
   // ✅ OPTIMIZACIÓN: Limitar tamaño del cache
   if (cache.size > 50) {
     const firstKey = cache.keys().next().value;
-    cache.delete(firstKey);
+    if (firstKey) {
+      cache.delete(firstKey);
+    }
   }
 }
 
@@ -64,8 +66,22 @@ export function useApi() {
     try {
       const cacheKey = 'categorias';
       const cachedData = getCachedData(cacheKey);
+      
+      // ✅ EXTRAER SOLO STRINGS INCLUSO DEL CACHE
+      const extractStrings = (items: any[]): string[] => {
+        return items.map(item => {
+          if (typeof item === 'string') {
+            return item;
+          } else if (typeof item === 'object' && item !== null) {
+            // Intentar extraer el nombre de diferentes formas posibles
+            return item.nombre || item.name || item.categoria || String(item);
+          }
+          return String(item);
+        });
+      };
+      
       if (cachedData) {
-        return cachedData;
+        return extractStrings(cachedData);
       }
 
       // ✅ SOLUCIÓN DEFINITIVA: Usar floristeriaId que sabemos que funciona
@@ -79,7 +95,12 @@ export function useApi() {
       }
       
       const data = await response.json();
-      const result = Array.isArray(data) ? data : [];
+      
+      // ✅ EXTRAER SOLO EL NOMBRE SI ES UN OBJETO
+      let result: string[] = [];
+      if (Array.isArray(data)) {
+        result = extractStrings(data);
+      }
       
       // ✅ GUARDAR EN CACHE
       setCachedData(cacheKey, result);

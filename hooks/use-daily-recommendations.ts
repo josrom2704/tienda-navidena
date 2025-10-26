@@ -72,18 +72,20 @@ export function useDailyRecommendations(): UseDailyRecommendationsReturn {
       
       for (const categoria of selectedCategories) {
         try {
-          console.log(`🔍 Obteniendo productos de categoría: ${categoria}`);
-          const productos = await getProductosByCategoria(dominio, categoria);
+          // ✅ Asegurar que categoria sea un string
+          const categoriaStr = typeof categoria === 'string' ? categoria : String(categoria);
+          console.log(`🔍 Obteniendo productos de categoría: ${categoriaStr}`);
+          const productos = await getProductosByCategoria(dominio, categoriaStr);
           
           if (productos && productos.length > 0) {
             // Seleccionar 1 producto aleatorio de cada categoría
             const randomIndex = Math.floor(Math.random() * productos.length);
             const selectedProduct = productos[randomIndex];
             
-            console.log(`✅ Producto seleccionado de ${categoria}:`, selectedProduct);
+            console.log(`✅ Producto seleccionado de ${categoriaStr}:`, selectedProduct);
             
             // Convertir el formato de la base de datos al formato del componente
-            const formattedProduct: Product = mapDatabaseProduct(selectedProduct, categoria);
+            const formattedProduct: Product = mapDatabaseProduct(selectedProduct, categoriaStr);
             
             allProducts.push(formattedProduct);
           }
