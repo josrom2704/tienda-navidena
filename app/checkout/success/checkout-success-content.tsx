@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, XCircle, Clock, Mail, Package, Truck, Home, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import EmailService from "@/lib/email-service";
 
 interface OrderDetails {
   reference: string;
@@ -14,6 +15,20 @@ interface OrderDetails {
   status: string;
   customerName: string;
   customerEmail: string;
+  items?: Array<{
+    name: string;
+    quantity: number;
+    price: number;
+    total: number;
+  }>;
+  shippingAddress?: {
+    name: string;
+    address: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+  };
 }
 
 export function CheckoutSuccessContent() {
@@ -21,30 +36,151 @@ export function CheckoutSuccessContent() {
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [emailSent, setEmailSent] = useState(false);
 
   useEffect(() => {
-    // Simular obtención de detalles del pedido
-    const reference = searchParams.get("reference");
-    const transactionId = searchParams.get("transaction_id");
-    
-    if (reference && transactionId) {
-      // Simular delay de carga
-      setTimeout(() => {
-        setOrderDetails({
-          reference,
-          transactionId,
-          amount: 299.99,
-          status: "approved",
-          customerName: "Cliente Ejemplo",
-          customerEmail: "cliente@ejemplo.com"
-        });
+    const loadOrderDetails = async () => {
+      try {
+        const reference = searchParams.get("reference");
+        const transactionId = searchParams.get("transaction_id");
+        const status = searchParams.get("status")?.toUpperCase() || "APPROVED";
+        
+        if (!reference) {
+          // Intentar obtener desde localStorage
+          const lastOrderNumber = localStorage.getItem('lastOrderNumber');
+          if (lastOrderNumber) {
+            const savedOrder = localStorage.getItem(`order_${lastOrderNumber}`);
+            if (savedOrder) {
+              const orderData = JSON.parse(savedOrder);
+              setOrderDetails({
+                reference: lastOrderNumber,
+                transactionId: transactionId || 'pending',
+                amount: orderData.total || 0,
+                status: status.toLowerCase(),
+                customerName: orderData.shippingAddress?.name || '',
+                customerEmail: orderData.customerInfo?.email || '',
+                items: orderData.items?.map((item: any) => ({
+                  name: item.name,
+                  quantity: item.quantity,
+                  price: item.price,
+                  total: item.price * item.quantity,
+                })) || [],
+                shippingAddress: orderData.shippingAddress,
+              });
+              setLoading(false);
+              return;
+            }
+          }
+          
+          setError("No se encontraron los parámetros de la transacción");
+          setLoading(false);
+          return;
+        }
+        
+        // Intentar obtener los detalles del pedido desde el backend
+        let orderData = null;
+        try {
+          const response = await fetch(`/api/orders?orderNumber=${reference}`);
+          if (response.ok) {
+            orderData = await response.json();
+          }
+        } catch (error) {
+          console.warn('Error obteniendo pedido del backend, intentando localStorage:', error);
+        }
+        
+        // Fallback a localStorage
+        if (!orderData) {
+          const savedOrder = localStorage.getItem(`order_${reference}`);
+          if (savedOrder) {
+            orderData = JSON.parse(savedOrder);
+          }
+        }
+        
+        if (orderData) {
+          setOrderDetails({
+            reference,
+            transactionId: transactionId || orderData.transactionId || 'pending',
+            amount: orderData.total || 0,
+            status: status.toLowerCase(),
+            customerName: orderData.shippingAddress?.name || '',
+            customerEmail: orderData.customerInfo?.email || '',
+            items: orderData.items?.map((item: any) => ({
+              name: item.name,
+              quantity: item.quantity,
+              price: item.price,
+              total: item.price * item.quantity,
+            })) || [],
+            shippingAddress: orderData.shippingAddress,
+          });
+        } else {
+          // Datos mínimos
+          setOrderDetails({
+            reference,
+            transactionId: transactionId || 'pending',
+            amount: 0,
+            status: status.toLowerCase(),
+            customerName: '',
+            customerEmail: '',
+          });
+        }
+        
         setLoading(false);
-      }, 2000);
-    } else {
-      setError("No se encontraron los parámetros de la transacción");
-      setLoading(false);
-    }
+      } catch (error) {
+        console.error('Error cargando detalles del pedido:', error);
+        setError("Error al cargar los detalles del pedido");
+        setLoading(false);
+      }
+    };
+
+    loadOrderDetails();
   }, [searchParams]);
+
+  // Enviar correo cuando el pedido esté aprobado
+  useEffect(() => {
+    const sendConfirmationEmail = async () => {
+      if (!orderDetails || emailSent || orderDetails.status !== 'approved') {
+        return;
+      }
+
+      // Verificar si ya se envió el correo (el webhook debería haberlo hecho)
+      const emailSentKey = `email_sent_${orderDetails.reference}`;
+      if (localStorage.getItem(emailSentKey)) {
+        setEmailSent(true);
+        return;
+      }
+
+      // Preparar datos para el email
+      if (orderDetails.items && orderDetails.items.length > 0 && orderDetails.shippingAddress) {
+        try {
+          const emailService = EmailService.getInstance();
+          const emailOrderDetails = {
+            orderNumber: orderDetails.reference,
+            items: orderDetails.items,
+            total: orderDetails.amount,
+            shippingAddress: orderDetails.shippingAddress,
+            customerInfo: {
+              email: orderDetails.customerEmail,
+              phone: '',
+            },
+            specialInstructions: '',
+            giftWrap: false,
+            giftMessage: '',
+          };
+
+          const sent = await emailService.sendOrderConfirmation(emailOrderDetails);
+          if (sent) {
+            setEmailSent(true);
+            localStorage.setItem(emailSentKey, 'true');
+            console.log('✅ Email de confirmación enviado desde la página de éxito');
+          }
+        } catch (error) {
+          console.error('Error enviando email:', error);
+        }
+      }
+    };
+
+    sendConfirmationEmail();
+  }, [orderDetails, emailSent]);
 
   if (loading) {
     return (

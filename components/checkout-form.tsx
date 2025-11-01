@@ -55,8 +55,60 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
       // Generar número de orden
       const orderNumber = `ORD-${Date.now()}`;
       
-      // Simular envío de email de confirmación
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Guardar el pedido antes de redirigir a Wompi
+      const orderData = {
+        orderNumber,
+        items: items.map(item => ({
+          id: item.id,
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+          image: item.image,
+        })),
+        total: total,
+        shippingAddress: {
+          name: `${formData.firstName} ${formData.lastName}`,
+          address: formData.address,
+          city: formData.city,
+          state: formData.country, // Usando country como state por ahora
+          zipCode: formData.postalCode,
+          country: formData.country,
+        },
+        customerInfo: {
+          email: formData.email,
+          phone: formData.phone,
+        },
+        specialInstructions: formData.notes || '',
+        giftWrap: false, // TODO: Agregar opción de gift wrap si la tienes
+        giftMessage: '',
+        status: 'pending',
+      };
+
+      // Guardar pedido en el backend/localStorage
+      try {
+        const response = await fetch('/api/orders', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(orderData),
+        });
+
+        if (response.ok) {
+          console.log('✅ Pedido guardado exitosamente');
+          
+          // Guardar también en localStorage como backup
+          localStorage.setItem(`order_${orderNumber}`, JSON.stringify(orderData));
+          
+          // Guardar orderNumber para recuperar en la página de éxito
+          localStorage.setItem('lastOrderNumber', orderNumber);
+        }
+      } catch (error) {
+        console.error('Error guardando pedido:', error);
+        // Guardar en localStorage como fallback
+        localStorage.setItem(`order_${orderNumber}`, JSON.stringify(orderData));
+        localStorage.setItem('lastOrderNumber', orderNumber);
+      }
       
       // Limpiar carrito y mostrar confirmación
       clearCart();
@@ -337,48 +389,104 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
     </div>
   );
 
-const renderStep3 = () => (
-  <div className="space-y-6">
-    <div className="text-center">
-      <h3 className="text-xl font-semibold text-elegant-black mb-4 title-elegant">
-        Resumen del Pedido
-      </h3>
-      <div className="bg-cream-100 p-4 rounded-lg border border-gold-200">
-        <p className="text-elegant-gray mb-2">
-          <span className="font-medium text-elegant-black">Cliente:</span> {formData.firstName} {formData.lastName}
-        </p>
-        <p className="text-elegant-gray mb-2">
-          <span className="font-medium text-elegant-black">Email:</span> {formData.email}
-        </p>
-        <p className="text-elegant-gray mb-2">
-          <span className="font-medium text-elegant-black">Total:</span> ${(total + (total >= 250 ? 0 : 3)).toLocaleString()}
-        </p>
+const renderStep3 = () => {
+  // Generar orderNumber una sola vez
+  const orderNumber = `ORD-${Date.now()}`;
+  
+  return (
+    <div className="space-y-6">
+      <div className="text-center">
+        <h3 className="text-xl font-semibold text-elegant-black mb-4 title-elegant">
+          Resumen del Pedido
+        </h3>
+        <div className="bg-cream-100 p-4 rounded-lg border border-gold-200">
+          <p className="text-elegant-gray mb-2">
+            <span className="font-medium text-elegant-black">Cliente:</span> {formData.firstName} {formData.lastName}
+          </p>
+          <p className="text-elegant-gray mb-2">
+            <span className="font-medium text-elegant-black">Email:</span> {formData.email}
+          </p>
+          <p className="text-elegant-gray mb-2">
+            <span className="font-medium text-elegant-black">Total:</span> ${(total + (total >= 250 ? 0 : 3)).toLocaleString()}
+          </p>
+        </div>
+      </div>
+
+      <div className="text-center">
+        <WompiButton
+          amount={total + (total >= 250 ? 0 : 3)} // ← CORREGIDO: Incluir envío
+          orderNumber={orderNumber}
+          customerEmail={formData.email}
+          customerName={`${formData.firstName} ${formData.lastName}`}
+          onPaymentSuccess={handlePaymentSuccess}
+          onPaymentError={handlePaymentError}
+          onBeforeRedirect={async () => {
+            // Guardar el pedido ANTES de redirigir a Wompi
+            const orderData = {
+            orderNumber,
+            items: items.map(item => ({
+              id: item.id,
+              name: item.name,
+              quantity: item.quantity,
+              price: item.price,
+              image: item.image,
+            })),
+            total: total,
+            shippingAddress: {
+              name: `${formData.firstName} ${formData.lastName}`,
+              address: formData.address,
+              city: formData.city,
+              state: formData.country,
+              zipCode: formData.postalCode,
+              country: formData.country,
+            },
+            customerInfo: {
+              email: formData.email,
+              phone: formData.phone,
+            },
+            specialInstructions: formData.notes || '',
+            giftWrap: false,
+            giftMessage: '',
+            status: 'pending',
+          };
+
+          // Guardar pedido
+          try {
+            const response = await fetch('/api/orders', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(orderData),
+            });
+            
+            // Guardar también en localStorage como backup
+            localStorage.setItem(`order_${orderNumber}`, JSON.stringify(orderData));
+            localStorage.setItem('lastOrderNumber', orderNumber);
+            
+            console.log('✅ Pedido guardado antes de redirigir a Wompi');
+          } catch (error) {
+            console.error('Error guardando pedido:', error);
+            // Guardar en localStorage como fallback
+            localStorage.setItem(`order_${orderNumber}`, JSON.stringify(orderData));
+            localStorage.setItem('lastOrderNumber', orderNumber);
+            }
+          }
+        }}
+      />
+      </div>
+
+      <div className="flex justify-center">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={prevStep}
+          className="elegant-button"
+        >
+          Atrás
+        </Button>
       </div>
     </div>
-
-    <div className="text-center">
-      <WompiButton
-        amount={total + (total >= 250 ? 0 : 3)} // ← CORREGIDO: Incluir envío
-        orderNumber={`ORD-${Date.now()}`}
-        customerEmail={formData.email}
-        customerName={`${formData.firstName} ${formData.lastName}`}
-        onPaymentSuccess={handlePaymentSuccess}
-        onPaymentError={handlePaymentError}
-      />
-    </div>
-
-    <div className="flex justify-center">
-      <Button
-        type="button"
-        variant="outline"
-        onClick={prevStep}
-        className="elegant-button"
-      >
-        Atrás
-      </Button>
-    </div>
-  </div>
-);
+  );
+};
 
   return (
     <div className="min-h-screen bg-cream-50 py-20">

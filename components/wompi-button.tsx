@@ -13,6 +13,7 @@ interface WompiButtonProps {
   customerName: string;
   onPaymentSuccess: (transactionId: string) => void;
   onPaymentError: (error: string) => void;
+  onBeforeRedirect?: () => Promise<void>; // Callback antes de redirigir a Wompi
 }
 
 export function WompiButton({ 
@@ -21,7 +22,8 @@ export function WompiButton({
   customerEmail, 
   customerName, 
   onPaymentSuccess, 
-  onPaymentError 
+  onPaymentError,
+  onBeforeRedirect 
 }: WompiButtonProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'success' | 'error'>('idle');
@@ -60,6 +62,16 @@ export function WompiButton({
 
       if (!paymentResponse.success) {
         throw new Error(paymentResponse.error || 'Error al crear el enlace de pago');
+      }
+
+      // Ejecutar callback antes de redirigir (para guardar pedido, etc.)
+      if (onBeforeRedirect) {
+        try {
+          await onBeforeRedirect();
+        } catch (error) {
+          console.error('Error en onBeforeRedirect:', error);
+          // Continuar con la redirección aunque haya error
+        }
       }
 
       // Redirigir al usuario al enlace de pago de Wompi

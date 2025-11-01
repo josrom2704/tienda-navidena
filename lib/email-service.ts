@@ -47,21 +47,19 @@ export class EmailService {
 
   public async sendOrderConfirmation(orderDetails: OrderDetails): Promise<boolean> {
     try {
-      // Simular envío de email
       console.log('📧 Enviando email de confirmación...');
       
       const emailTemplate = this.generateOrderConfirmationEmail(orderDetails);
       
-      // Simular delay de envío
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Enviar email real a través del backend
+      const emailSent = await this.sendEmail(orderDetails.customerInfo.email, emailTemplate);
       
-      console.log('✅ Email enviado exitosamente a:', orderDetails.customerInfo.email);
-      console.log('📧 Asunto:', emailTemplate.subject);
+      if (emailSent) {
+        console.log('✅ Email enviado exitosamente a:', orderDetails.customerInfo.email);
+        console.log('📧 Asunto:', emailTemplate.subject);
+      }
       
-      // En producción, aquí se enviaría el email real
-      // await this.sendEmail(orderDetails.customerInfo.email, emailTemplate);
-      
-      return true;
+      return emailSent;
     } catch (error) {
       console.error('❌ Error enviando email:', error);
       return false;
@@ -74,12 +72,17 @@ export class EmailService {
       
       const emailTemplate = this.generateAdminNotificationEmail(orderDetails);
       
-      // Simular delay de envío
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // Email del administrador
+      const adminEmail = 'clientesfloristeria@gmail.com';
       
-      console.log('✅ Notificación enviada al administrador');
+      // Enviar email real al administrador
+      const emailSent = await this.sendEmail(adminEmail, emailTemplate);
       
-      return true;
+      if (emailSent) {
+        console.log('✅ Notificación enviada al administrador:', adminEmail);
+      }
+      
+      return emailSent;
     } catch (error) {
       console.error('❌ Error enviando notificación al admin:', error);
       return false;
@@ -323,22 +326,47 @@ export class EmailService {
     return { subject, html, text };
   }
 
-  // Método para enviar email real (en producción)
+  // Método para enviar email real
   private async sendEmail(to: string, template: EmailTemplate): Promise<boolean> {
-    // Aquí se implementaría la lógica real de envío de email
-    // Por ejemplo, usando SendGrid, Mailgun, AWS SES, etc.
-    
-    const emailData = {
-      to,
-      subject: template.subject,
-      html: template.html,
-      text: template.text,
-    };
-    
-    console.log('📧 Datos del email a enviar:', emailData);
-    
-    // Simular respuesta exitosa
-    return true;
+    try {
+      const emailData = {
+        to,
+        subject: template.subject,
+        html: template.html,
+        text: template.text,
+      };
+      
+      console.log('📧 Enviando email a:', to);
+      console.log('📧 Asunto:', template.subject);
+      
+      // Usar nuestra API route de Next.js que maneja el envío
+      // Esta ruta intentará el backend primero, luego servicios alternativos
+      const baseUrl = typeof window !== 'undefined' 
+        ? window.location.origin 
+        : process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
+      
+      const response = await fetch(`${baseUrl}/api/email/send`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(emailData),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          console.log('✅ Email enviado exitosamente');
+          return true;
+        }
+      }
+      
+      console.warn('⚠️ No se pudo enviar el email');
+      return false;
+    } catch (error) {
+      console.error('❌ Error enviando email:', error);
+      return false;
+    }
   }
 }
 

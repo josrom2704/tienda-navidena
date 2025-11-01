@@ -169,10 +169,11 @@ export default function ContactoPage() {
                   <p className="text-gray-600">Sábados: 8:00 AM - 4:00 PM</p>
                   <p className="text-gray-600">Domingos: 8:00 AM - 12:00 PM</p>
                 </div>
+
               </div>
             </CardContent>
           </Card>
-
+          
           <Card className="border-0 shadow-xl bg-gradient-to-br from-green-50 to-red-50">
             <CardContent className="p-6">
               <div className="flex items-center space-x-3 mb-4">
