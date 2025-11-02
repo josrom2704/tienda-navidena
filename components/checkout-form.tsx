@@ -389,11 +389,11 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
     </div>
   );
 
-const renderStep3 = () => {
-  // Generar orderNumber una sola vez
-  const orderNumber = `ORD-${Date.now()}`;
-  
-  return (
+  const renderStep3 = () => {
+    // Generar orderNumber una sola vez
+    const orderNumber = `ORD-${Date.now()}`;
+    
+    return (
     <div className="space-y-6">
       <div className="text-center">
         <h3 className="text-xl font-semibold text-elegant-black mb-4 title-elegant">
@@ -468,7 +468,6 @@ const renderStep3 = () => {
             // Guardar en localStorage como fallback
             localStorage.setItem(`order_${orderNumber}`, JSON.stringify(orderData));
             localStorage.setItem('lastOrderNumber', orderNumber);
-            }
           }
         }}
       />
@@ -486,7 +485,7 @@ const renderStep3 = () => {
       </div>
     </div>
   );
-};
+  };
 
   return (
     <div className="min-h-screen bg-cream-50 py-20">
