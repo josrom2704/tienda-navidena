@@ -20,40 +20,7 @@ const nextConfig = {
   // ✅ OPTIMIZACIÓN: Compresión y optimizaciones
   compress: true,
   poweredByHeader: false,
-  // ✅ OPTIMIZACIÓN: Bundle splitting avanzado
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.optimization.splitChunks = {
-        chunks: 'all',
-        cacheGroups: {
-          default: false,
-          vendors: false,
-          // ✅ Vendor chunk para librerías grandes
-          vendor: {
-            name: 'vendor',
-            chunks: 'all',
-            test: /node_modules/,
-            priority: 20
-          },
-          // ✅ Chunk para UI components
-          ui: {
-            name: 'ui',
-            chunks: 'all',
-            test: /[\\/]components[\\/]ui[\\/]/,
-            priority: 30
-          },
-          // ✅ Chunk para Lucide icons
-          icons: {
-            name: 'icons',
-            chunks: 'all',
-            test: /[\\/]node_modules[\\/]lucide-react[\\/]/,
-            priority: 25
-          }
-        }
-      };
-    }
-    return config;
-  },
+  poweredByHeader: false,
   // ✅ OPTIMIZACIÓN: Configuración de headers para cache
   async headers() {
     return [
