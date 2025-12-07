@@ -6,6 +6,7 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { CartProvider } from "@/components/cart-provider"
 import { Preloader } from "@/components/preloader"
+import { Snowfall } from "@/components/snowfall"
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -49,7 +50,7 @@ export const metadata: Metadata = {
   title: "Canastas Navideñas Premium | Regalos Especiales",
   description:
     "Tienda especializada en canastas navideñas, arreglos florales y regalos premium. Regala momentos inolvidables esta Navidad.",
-    generator: 'v0.dev'
+  generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -65,6 +66,7 @@ export default function RootLayout({
           <main className="min-h-screen">{children}</main>
           <Footer />
           <Preloader />
+          <Snowfall />
         </CartProvider>
       </body>
     </html>
